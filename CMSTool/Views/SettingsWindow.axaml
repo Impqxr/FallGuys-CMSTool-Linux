@@ -1,0 +1,71 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="330"
+        x:Class="FGCMSTool.Views.SettingsWindow"
+        Title="СMS Tool - Settings"
+		TransparencyLevelHint="AcrylicBlur"
+        Background="Transparent"
+		Width="600"
+		Height="330"
+		CanResize="False"
+		ExtendClientAreaToDecorationsHint="True">
+	<Panel>
+		<Label IsHitTestVisible="False" Margin="0,5,0,0" HorizontalAlignment="Center">СMS Tool - Settings</Label>
+		<Separator VerticalAlignment="Top" Margin="10,30,10,0"/>
+
+		<StackPanel Margin="15,40,15,0" Spacing="5">
+			<Grid Margin="0,5,0,5" ColumnDefinitions="*,Auto,*" VerticalAlignment="Center">
+				<Border BorderBrush="Gray" BorderThickness="0,1,0,0" VerticalAlignment="Center" Margin="0,0,5,0" Grid.Column="0"/>
+				<TextBlock Text="XOR Key" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1"/>
+				<Border BorderBrush="Gray" BorderThickness="0,1,0,0" VerticalAlignment="Center" Margin="5,0,0,0" Grid.Column="2"/>
+			</Grid>
+
+			<TextBox x:Name="XorKey"
+					 Watermark="XOR Key used to decrypt and encrypt content"
+					 Margin="0,0,5,0"
+					 TextChanged="OnXorChanged"/>
+
+			<Grid Margin="0,5,0,5" ColumnDefinitions="*,Auto,*" VerticalAlignment="Center">
+				<Border BorderBrush="Gray" BorderThickness="0,1,0,0" VerticalAlignment="Center" Margin="0,0,5,0" Grid.Column="0"/>
+				<TextBlock Text="Decrypt Strategy" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1"/>
+				<Border BorderBrush="Gray" BorderThickness="0,1,0,0" VerticalAlignment="Center" Margin="5,0,0,0" Grid.Column="2"/>
+			</Grid>
+			
+			<ComboBox
+				x:Name="DecryptCombo"
+				Margin="0,0,5,0"
+				HorizontalAlignment="Stretch"
+				SelectionChanged="SetDecryptStrat">
+				<ComboBoxItem>Default</ComboBoxItem>
+				<ComboBoxItem>Decrypt with formatting</ComboBoxItem>
+				<ComboBoxItem>Decrypt and split into parts</ComboBoxItem>
+			</ComboBox>
+			<TextBlock x:Name="DecryptCombo_Desc" Margin="0" HorizontalAlignment="Center" FontSize="11">Strategy desc</TextBlock>
+
+			<Grid Margin="0,5,0,5" ColumnDefinitions="*,Auto,*" VerticalAlignment="Center">
+				<Border BorderBrush="Gray" BorderThickness="0,1,0,0" VerticalAlignment="Center" Margin="0,0,5,0" Grid.Column="0"/>
+				<TextBlock Text="Encrypt Strategy" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1"/>
+				<Border BorderBrush="Gray" BorderThickness="0,1,0,0" VerticalAlignment="Center" Margin="5,0,0,0" Grid.Column="2"/>
+			</Grid>
+			<ComboBox
+				x:Name="EncryptCombo"
+				Margin="0,0,5,0"
+				HorizontalAlignment="Stretch"
+				SelectionChanged="SetEncryptStrat">
+				<ComboBoxItem>content_v1</ComboBoxItem>
+				<ComboBoxItem>content_v2</ComboBoxItem>
+			</ComboBox>
+			<TextBlock x:Name="EncryptCombo_Desc" Margin="0" HorizontalAlignment="Center" FontSize="11">Strategy desc</TextBlock>
+
+
+			<Button Content="Save changes on disk"
+					HorizontalAlignment="Stretch"
+					HorizontalContentAlignment="Center"
+					VerticalContentAlignment="Center"
+					Click="SaveSettings"/>
+		</StackPanel>
+
+	</Panel>
+</Window>
