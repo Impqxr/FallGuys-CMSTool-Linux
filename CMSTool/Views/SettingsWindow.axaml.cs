@@ -44,13 +44,13 @@ namespace FGCMSTool.Views
             switch (Settings.SavedSettings.DecryptStrat)
             {
                 case DecryptStrat.Default:
-                    DecryptCombo_Desc.Text = "Decrypts content file in form it was encrypted.";
+                    DecryptCombo_Desc.Text = "Decrypts the content file exactly as it was encrypted.";
                     break;
                 case DecryptStrat.Formatting:
-                    DecryptCombo_Desc.Text = "Decrypts content file and adds formatting for more user friendly look.";
+                    DecryptCombo_Desc.Text = "Decrypts the content file and formats it with indentation for more readable look.";
                     break;
                 case DecryptStrat.Parts:
-                    DecryptCombo_Desc.Text = "Decrypts content file and splits it into parts. This is the most user friendly way to edit file.";
+                    DecryptCombo_Desc.Text = "Decrypts the content file and splits it into parts for easier editing.";
                     break;
             }
         }

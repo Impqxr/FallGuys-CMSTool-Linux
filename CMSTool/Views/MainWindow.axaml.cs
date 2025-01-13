@@ -274,7 +274,7 @@ namespace FGCMSTool.Views
             byte[] content;
             if (Path.GetFileName(cmsPath) != "_meta.json")
             {
-                content = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(JsonConvert.DeserializeObject(File.ReadAllText(cmsPath)), Formatting.None));
+                content = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(JsonConvert.DeserializeObject(File.ReadAllText(cmsPath)), Formatting.Indented));
             }
             else
             {
