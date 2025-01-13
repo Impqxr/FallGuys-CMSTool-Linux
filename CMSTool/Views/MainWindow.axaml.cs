@@ -81,7 +81,7 @@ namespace FGCMSTool.Views
                 item = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()
                 {
                     AllowMultiple = false,
-                    Title = pickerName
+                    Title = pickerName,
                 });
             }
             else
@@ -135,21 +135,21 @@ namespace FGCMSTool.Views
                 ProgressState.Text = "Decryption - Working";
 
                 byte[] outputJson;
-                var mybytes = File.ReadAllBytes(cmsPath);
+                var cmsBytes = File.ReadAllBytes(cmsPath);
 
-                XorTask(ref mybytes, xorKey);
+                XorTask(ref cmsBytes, xorKey);
 
                 if (isV2)
                 {
                     using MemoryStream memoryStream = new();
-                    using MemoryStream stream = new(mybytes);
+                    using MemoryStream stream = new(cmsBytes);
                     using GZipStream gZipStream = new(stream, CompressionMode.Decompress);
                     gZipStream.CopyTo(memoryStream);
                     outputJson = memoryStream.ToArray();
                 }
                 else
                 {
-                    outputJson = mybytes;
+                    outputJson = cmsBytes;
                 }
 
                 if (!Directory.Exists(DecryptionOutputDir))
@@ -157,11 +157,11 @@ namespace FGCMSTool.Views
 
                     ProcessContentJson(outputJson, contentOut);
 
-                ProgressState.Text = $"Idle - Decryption result was saved - decrypted as {contentOut}";
+                ProgressState.Text = $"Idle - Content was decrypted as {contentOut}";
                 SystemSounds.Asterisk.Play();
 
                 Array.Clear(outputJson);
-                Array.Clear(mybytes);
+                Array.Clear(cmsBytes);
             }
             catch (Exception ex)
             {
@@ -230,35 +230,35 @@ namespace FGCMSTool.Views
             try
             {
                 byte[] xorKey = Encoding.UTF8.GetBytes(SettingsManager.Settings.SavedSettings.XorKey);
-                byte[] ContentToEncrypt = GetContentBytes(cmsPath);
+                byte[] cmsBytes = GetContentBytes(cmsPath);
 
                 ProgressState.Text = "Encryption - Working";
 
                 switch (SettingsManager.Settings.SavedSettings.EncryptStrart)
                 {
                     case SettingsManager.EncryptStrart.V1:
-                        XorTask(ref ContentToEncrypt, xorKey);
-                        File.WriteAllBytes(Path.Combine(EncryptionOutputDir, "content_v1"), ContentToEncrypt);
+                        XorTask(ref cmsBytes, xorKey);
+                        File.WriteAllBytes(Path.Combine(EncryptionOutputDir, "content_v1"), cmsBytes);
                         break;
 
                     case SettingsManager.EncryptStrart.V2:
-                        using (MemoryStream compressedStream = new())
+                        using (MemoryStream stream = new())
                         {
-                            using (GZipStream gzipStream = new(compressedStream, CompressionMode.Compress))
+                            using (GZipStream gzipStream = new(stream, CompressionMode.Compress))
                             {
-                                gzipStream.Write(ContentToEncrypt, 0, ContentToEncrypt.Length);
+                                gzipStream.Write(cmsBytes, 0, cmsBytes.Length);
                             }
 
-                            byte[] compressedBytes = compressedStream.ToArray();
+                            var bytes = stream.ToArray();
 
-                            XorTask(ref compressedBytes, xorKey);
+                            XorTask(ref bytes, xorKey);
 
-                            File.WriteAllBytes(Path.Combine(EncryptionOutputDir, "content_v2.gdata"), compressedBytes);
+                            File.WriteAllBytes(Path.Combine(EncryptionOutputDir, "content_v2.gdata"), bytes);
                         }
                         break;
                 }
 
-                ProgressState.Text = $"Idle - Encryption result was saved. Encrypted as {SettingsManager.Settings.SavedSettings.EncryptStrart}";
+                ProgressState.Text = $"Idle - Content was encrypted as {SettingsManager.Settings.SavedSettings.EncryptStrart}";
                 SystemSounds.Asterisk.Play();
             }
             catch (Exception ex)
@@ -269,12 +269,11 @@ namespace FGCMSTool.Views
             }
         }
 
-        byte[] GetContentBytes(string cmsPath)
+        static byte[] GetContentBytes(string cmsPath)
         {
-            byte[] content;
             if (Path.GetFileName(cmsPath) != "_meta.json")
             {
-                content = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(JsonConvert.DeserializeObject(File.ReadAllText(cmsPath)), Formatting.Indented));
+                return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(JsonConvert.DeserializeObject(File.ReadAllText(cmsPath)), Formatting.None));
             }
             else
             {
@@ -283,9 +282,8 @@ namespace FGCMSTool.Views
                 {
                     finalCms[Path.GetFileNameWithoutExtension(jsonFile)] = JsonConvert.DeserializeObject(File.ReadAllText(jsonFile));
                 }
-                content = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(finalCms, Formatting.None));
+                return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(finalCms, Formatting.None));
             }
-            return content;
         }
 
         void XorTask(ref byte[] bytes, byte[] xor)
