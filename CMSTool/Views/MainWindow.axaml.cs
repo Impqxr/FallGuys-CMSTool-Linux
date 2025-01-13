@@ -30,10 +30,11 @@ namespace FGCMSTool.Views
 {
     public partial class MainWindow : Window
     {
-        string DecryptionOutputDir;
-        string EncryptionOutputDir;
-        string LogsDir;
         const string ErrorDefault = "Something went wrong, check logs for details";
+
+        readonly string DecryptionOutputDir;
+        readonly string EncryptionOutputDir;
+        readonly string LogsDir;
         public MainWindow()
         {
             InitializeComponent();
@@ -81,7 +82,7 @@ namespace FGCMSTool.Views
                 item = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()
                 {
                     AllowMultiple = false,
-                    Title = pickerName,
+                    Title = pickerName
                 });
             }
             else
