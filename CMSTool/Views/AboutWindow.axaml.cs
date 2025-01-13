@@ -17,7 +17,7 @@ namespace FGCMSTool.Views
         }
 
         private void OpenDiscord(object? sender, RoutedEventArgs e) => OpenURL("https://discord.gg/PEysxvSE3x");
-        private void OpenGithubRepo(object? sender, RoutedEventArgs e) => OpenURL("https://github.com/floyzi");
+        private void OpenGithubRepo(object? sender, RoutedEventArgs e) => OpenURL("https://github.com/floyzi/FallGuys-CMSTool");
 
         void OpenURL(string url) => Process.Start(new ProcessStartInfo
         {

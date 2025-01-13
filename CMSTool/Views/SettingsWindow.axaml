@@ -22,10 +22,17 @@
 				<Border BorderBrush="Gray" BorderThickness="0,1,0,0" VerticalAlignment="Center" Margin="5,0,0,0" Grid.Column="2"/>
 			</Grid>
 
-			<TextBox x:Name="XorKey"
+			<Grid Margin="0,5,0,0">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="Auto"/>
+				</Grid.ColumnDefinitions>
+				<TextBox x:Name="XorKey"
 					 Watermark="XOR Key used to decrypt and encrypt content"
 					 Margin="0,0,5,0"
 					 TextChanged="OnXorChanged"/>
+				<Button Content="Default" Grid.Column="1" Click="ResetXor"/>
+			</Grid>
 
 			<Grid Margin="0,5,0,5" ColumnDefinitions="*,Auto,*" VerticalAlignment="Center">
 				<Border BorderBrush="Gray" BorderThickness="0,1,0,0" VerticalAlignment="Center" Margin="0,0,5,0" Grid.Column="0"/>

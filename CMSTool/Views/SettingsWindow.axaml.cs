@@ -61,6 +61,12 @@ namespace FGCMSTool.Views
             Settings.SavedSettings.XorKey = box.Text;
         }
 
+        void ResetXor(object sender, RoutedEventArgs e)
+        {
+            Debug.WriteLine(Settings.DefaultSettings.XorKey);
+            XorKey.Text = Settings.DefaultSettings.XorKey;
+        }
+
         void SaveSettings(object sender, RoutedEventArgs e)
         {
             Settings.Save();

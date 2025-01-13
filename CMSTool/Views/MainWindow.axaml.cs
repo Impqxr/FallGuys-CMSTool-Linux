@@ -33,6 +33,7 @@ namespace FGCMSTool.Views
         string DecryptionOutputDir;
         string EncryptionOutputDir;
         string LogsDir;
+        const string ErrorDefault = "Something went wrong, check logs for details";
         public MainWindow()
         {
             InitializeComponent();
@@ -100,15 +101,29 @@ namespace FGCMSTool.Views
             }
         }
 
+        bool DefaultCheck(string sender, string path)
+        {
+            if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
+            {
+                ProgressState.Text = $"{sender} - Please, put a valid file";
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(SettingsManager.Settings.SavedSettings.XorKey))
+            {
+                ProgressState.Text = $"{sender} - XorKey can't be blank";
+                return false;
+            }
+
+            return true;
+        }
+
         private void DecodeContent(object sender, RoutedEventArgs e)
         {
             var cmsPath = CMSPath_Encrypted.Text;
 
-            if (string.IsNullOrWhiteSpace(cmsPath) || !File.Exists(cmsPath))
-            {
-                ProgressState.Text = "Decryption - Please put a valid file";
+            if (!DefaultCheck("Decryption", cmsPath))
                 return;
-            }
 
             byte[] xorKey = Encoding.UTF8.GetBytes(SettingsManager.Settings.SavedSettings.XorKey);
             var extension = Path.GetExtension(cmsPath);
@@ -151,7 +166,7 @@ namespace FGCMSTool.Views
             catch (Exception ex)
             {
                 WriteLog(ex, $"Cannot decrypt content file - IsV2 {isV2} - Xor {SettingsManager.Settings.SavedSettings.XorKey}");
-                ProgressState.Text = "Decryption - Something went wrong, check logs for details";
+                ProgressState.Text = $"Decryption - {ErrorDefault}";
                 SystemSounds.Exclamation.Play();
             }
         }
@@ -197,7 +212,7 @@ namespace FGCMSTool.Views
             }
             catch (Exception ex)
             {
-                ProgressState.Text = "Decryption - Something went wrong, check logs for details";
+                ProgressState.Text = $"Decryption - {ErrorDefault}";
                 WriteLog(ex, $"Cannot write decrypted content file - Decrypt start {SettingsManager.Settings.SavedSettings.DecryptStrat}");
                 SystemSounds.Exclamation.Play();
             }
@@ -209,11 +224,8 @@ namespace FGCMSTool.Views
         {
             var cmsPath = CMSPath_Decrypted.Text;
 
-            if (string.IsNullOrWhiteSpace(cmsPath) || !File.Exists(cmsPath))
-            {
-                ProgressState.Text = "Encryption - Please put a valid file";
+            if (!DefaultCheck("Encryption", cmsPath))
                 return;
-            }
 
             try
             {
@@ -246,12 +258,12 @@ namespace FGCMSTool.Views
                         break;
                 }
 
-                ProgressState.Text = $"Idle - Encryption result was saved - encrypted as {SettingsManager.Settings.SavedSettings.EncryptStrart}";
+                ProgressState.Text = $"Idle - Encryption result was saved. Encrypted as {SettingsManager.Settings.SavedSettings.EncryptStrart}";
                 SystemSounds.Asterisk.Play();
             }
             catch (Exception ex)
             {
-                ProgressState.Text = "Encryption - Something went wrong, check logs for details";
+                ProgressState.Text = $"Encryption - {ErrorDefault}";
                 WriteLog(ex, $"Cannot encrypt content file - Encrypt version {SettingsManager.Settings.SavedSettings.EncryptStrart}");
                 SystemSounds.Exclamation.Play();
             }
@@ -312,8 +324,8 @@ namespace FGCMSTool.Views
         }
 
 
-        void OpenPicker_Encrypted(object sender, RoutedEventArgs e) => TogglePicker(false, "Select Content File", CMSPath_Encrypted);
-        void OpenPicker_Decrypted(object sender, RoutedEventArgs e) => TogglePicker(false, "Select Content JSON or ._meta.json if content was splitted by parts", CMSPath_Decrypted);
+        void OpenPicker_Encrypted(object sender, RoutedEventArgs e) => TogglePicker(false, "Select content file", CMSPath_Encrypted);
+        void OpenPicker_Decrypted(object sender, RoutedEventArgs e) => TogglePicker(false, "Select content JSON or ._meta.json if content was splitted by parts", CMSPath_Decrypted);
         void OpenOutput_Decrypted(object sender, RoutedEventArgs e) => OpenDir(DecryptionOutputDir);
         void OpenOutput_Encrypted(object sender, RoutedEventArgs e) => OpenDir(EncryptionOutputDir);
         void OpenLogs(object sender, RoutedEventArgs e) => OpenDir(LogsDir);

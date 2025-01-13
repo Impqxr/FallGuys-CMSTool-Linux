@@ -32,10 +32,20 @@ namespace FGCMSTool
             public string? XorKey;
             public DecryptStrat DecryptStrat;
             public EncryptStrart EncryptStrart;
+
+            public SettingsJson Copy()
+            {
+                return new SettingsJson
+                {
+                    XorKey = this.XorKey,
+                    DecryptStrat = this.DecryptStrat,
+                    EncryptStrart = this.EncryptStrart
+                };
+            }
         }
 
         public SettingsJson? SavedSettings;
-        readonly SettingsJson DefaultSettings = new()
+        public readonly SettingsJson DefaultSettings = new()
         {
             XorKey = "a#!sC0,.",
             DecryptStrat = DecryptStrat.Default,
@@ -52,7 +62,7 @@ namespace FGCMSTool
             {
                 if (!File.Exists(ConfigPath))
                 {
-                    SavedSettings = DefaultSettings;
+                    SavedSettings = DefaultSettings.Copy();
                 }
                 else
                 {
@@ -61,7 +71,7 @@ namespace FGCMSTool
             }
             catch
             {
-                SavedSettings = DefaultSettings;
+                SavedSettings = DefaultSettings.Copy();
             }
         }
 
