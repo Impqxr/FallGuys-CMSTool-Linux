@@ -10,7 +10,7 @@
 - Encryption in both ways. Content_v1 & content_v2
 
 ## Usage
-- Extract [latest release](https://github.com/FallGuys-CMSTool/FGToolsMobile/releases/latest) into the blank folder and launch the .exe
+- Extract [latest release](https://github.com/floyzi/FallGuys-CMSTool/releases/latest) into the blank folder and launch the .exe
 ### Decryption
 - Select `content_v2.gdata` or `content_v1` file (can be found in `AppData/LocalLow/Mediatonic/FallGuys_client/`)
 - Hit the `"Decrypt"` button and wait for a moment
