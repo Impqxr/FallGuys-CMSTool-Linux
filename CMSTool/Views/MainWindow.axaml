@@ -11,7 +11,7 @@
 		TransparencyLevelHint="AcrylicBlur,Blur,Transparent"
         Background="Transparent"
 		Width="600"
-		Height="300"
+		Height="400"
 		CanResize="False"
 		ExtendClientAreaToDecorationsHint="True"
 		WindowStartupLocation="CenterScreen">
@@ -23,6 +23,7 @@
 			<MenuItem Header="_Open">
 				<MenuItem Header="Decoded Output" Click="OpenOutput_Decrypted" />
 				<MenuItem Header="Encoded Output" Click="OpenOutput_Encrypted" />
+				<MenuItem Header="Decoded Image Output" Click="OpenOutput_Images" />
 				<MenuItem Header="Logs" Click="OpenLogs"/>
 			</MenuItem>
         </Menu>
@@ -32,7 +33,27 @@
     <Separator VerticalAlignment="Top" Margin="10,30,10,0"/>
     
     <StackPanel Margin="15,40,15,0" Spacing="5" VerticalAlignment="Stretch">
-		<Grid Margin="0,5,0,5" ColumnDefinitions="*,Auto,*" VerticalAlignment="Center">
+	    <Grid Margin="0,5,0,5" ColumnDefinitions="*,Auto,*" VerticalAlignment="Center">
+		    <Border BorderBrush="Gray" BorderThickness="0,1,0,0" VerticalAlignment="Center" Margin="0,0,5,0" Grid.Column="0"/>
+		    <TextBlock Text="Decode images" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1"/>
+		    <Border BorderBrush="Gray" BorderThickness="0,1,0,0" VerticalAlignment="Center" Margin="5,0,0,0" Grid.Column="2"/>
+	    </Grid>
+	    <Grid Margin="0,5,0,0">
+		    <Grid.ColumnDefinitions>
+			    <ColumnDefinition Width="*"/>
+			    <ColumnDefinition Width="Auto"/>
+		    </Grid.ColumnDefinitions>
+		    <TextBox x:Name="CMSImageFileMapPath" Watermark="Path to file map (files.map)" Grid.Column="0" Margin="0,0,5,0"/>
+		    <Button Content="Browse" Grid.Column="1" Click="OpenPicker_ImageFileMap"/>
+	    </Grid>
+	    <Button
+		    Content="Decode (~5 seconds)"
+		    HorizontalAlignment="Stretch"
+		    HorizontalContentAlignment="Center"
+		    VerticalContentAlignment="Center"
+		    Click="DecodeImages"/>
+	    
+	    <Grid Margin="0,5,0,5" ColumnDefinitions="*,Auto,*" VerticalAlignment="Center">
 			<Border BorderBrush="Gray" BorderThickness="0,1,0,0" VerticalAlignment="Center" Margin="0,0,5,0" Grid.Column="0"/>
 			<TextBlock Text="Decrypt" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1"/>
 			<Border BorderBrush="Gray" BorderThickness="0,1,0,0" VerticalAlignment="Center" Margin="5,0,0,0" Grid.Column="2"/>
