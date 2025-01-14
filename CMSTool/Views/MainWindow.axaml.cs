@@ -34,6 +34,7 @@ namespace FGCMSTool.Views
 
         readonly string DecryptionOutputDir;
         readonly string EncryptionOutputDir;
+        readonly string ImagesOutputDir;
         readonly string LogsDir;
         public MainWindow()
         {
@@ -48,6 +49,10 @@ namespace FGCMSTool.Views
             EncryptionOutputDir = Path.Combine(baseDir, "Encrypted_Output");
             if (!Directory.Exists(EncryptionOutputDir))
                 Directory.CreateDirectory(EncryptionOutputDir);
+            
+            ImagesOutputDir = Path.Combine(baseDir, "Images_Output");
+            if (!Directory.Exists(ImagesOutputDir))
+                Directory.CreateDirectory(ImagesOutputDir);
 
             LogsDir = Path.Combine(baseDir, "Logs");
             if (!Directory.Exists(LogsDir))
@@ -168,6 +173,42 @@ namespace FGCMSTool.Views
             {
                 WriteLog(ex, $"Cannot decrypt content file - IsV2 {isV2} - Xor {SettingsManager.Settings.SavedSettings.XorKey}");
                 ProgressState.Text = $"Decryption - {ErrorDefault}";
+                SystemSounds.Exclamation.Play();
+            }
+        }
+
+        private void DecodeImages(object sender, RoutedEventArgs e)
+        {
+            var mapPath = CMSImageFileMapPath.Text;
+
+            if (!DefaultCheck("Decode", mapPath))
+                return;
+            
+            try
+            {
+                ProgressState.Text = "Decode - Working";
+                
+                List<CMSImage> images = CMSImage.ReadCMSImages(mapPath);
+                StringBuilder sb = new StringBuilder();
+
+                foreach (var image in images)
+                {
+                    sb.AppendLine(image.ToString());
+                    image.WriteToPngFile(Path.Combine(ImagesOutputDir, image.Name + ".png"));
+                }
+                
+                File.WriteAllText(Path.Combine(ImagesOutputDir, "files.map.txt"), sb.ToString());
+
+                if (!Directory.Exists(ImagesOutputDir))
+                    Directory.CreateDirectory(ImagesOutputDir);
+                
+                ProgressState.Text = $"Idle - Images decoded to {Path.GetFileName(ImagesOutputDir)}";
+                SystemSounds.Asterisk.Play();
+            }
+            catch (Exception ex)
+            {
+                WriteLog(ex, "Cannot decode images");
+                ProgressState.Text = $"Decode - {ErrorDefault}";
                 SystemSounds.Exclamation.Play();
             }
         }
@@ -325,8 +366,10 @@ namespace FGCMSTool.Views
 
         void OpenPicker_Encrypted(object sender, RoutedEventArgs e) => TogglePicker(false, "Select content file", CMSPath_Encrypted);
         void OpenPicker_Decrypted(object sender, RoutedEventArgs e) => TogglePicker(false, "Select content JSON or ._meta.json if content was splitted by parts", CMSPath_Decrypted);
+        void OpenPicker_ImageFileMap(object sender, RoutedEventArgs e) => TogglePicker(false, "Select file map", CMSImageFileMapPath);
         void OpenOutput_Decrypted(object sender, RoutedEventArgs e) => OpenDir(DecryptionOutputDir);
         void OpenOutput_Encrypted(object sender, RoutedEventArgs e) => OpenDir(EncryptionOutputDir);
+        void OpenOutput_Images(object sender, RoutedEventArgs e) => OpenDir(ImagesOutputDir);
         void OpenLogs(object sender, RoutedEventArgs e) => OpenDir(LogsDir);
     }
 }
