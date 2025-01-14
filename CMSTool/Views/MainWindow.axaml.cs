@@ -201,13 +201,17 @@ namespace FGCMSTool.Views
                     Directory.CreateDirectory(ImagesOutputDir);
                 
                 ProgressState.Text = $"Idle - Images decoded to {Path.GetFileName(ImagesOutputDir)}";
-                SystemSounds.Asterisk.Play();
+                #if RELEASE_WIN_X64 || DEBUG
+                    SystemSounds.Asterisk.Play();
+                #endif
             }
             catch (Exception ex)
             {
                 WriteLog(ex, "Cannot decode images");
                 ProgressState.Text = $"Decode - {ErrorDefault}";
-                SystemSounds.Exclamation.Play();
+                #if RELEASE_WIN_X64 || DEBUG
+                    SystemSounds.Exclamation.Play();
+                #endif
             }
         }
 
