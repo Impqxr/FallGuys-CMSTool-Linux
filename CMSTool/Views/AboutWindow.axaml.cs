@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Avalonia.Media;
 
 namespace FGCMSTool.Views
 {
@@ -10,6 +11,7 @@ namespace FGCMSTool.Views
         public AboutWindow()
         {
             InitializeComponent();
+
             Loaded += (sender, e) =>
             {
                 AppVer.Text = string.Format(AppVer.Text, FileVersionInfo.GetVersionInfo(Environment.ProcessPath).FileVersion);

@@ -6,17 +6,23 @@
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <Configurations>Debug;Release-Win-x64;Release-Linux-x64</Configurations>
+	<AssemblyName>CMSTool</AssemblyName>
+	<Version>1.0.0</Version>
+	<FileVersion>1.0.0</FileVersion>
   </PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)' == 'Release-Win-x64'">
+		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)' == 'Release-Linux-x64'">
+		<RuntimeIdentifier>linux-x64</RuntimeIdentifier>
+	</PropertyGroup>
 
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
-
-	<PropertyGroup>
-		<AssemblyName>CMSTool</AssemblyName>
-		<Version>1.0.0</Version>
-		<FileVersion>1.0.0</FileVersion>
-	</PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="11.2.1" />

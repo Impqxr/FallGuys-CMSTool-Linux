@@ -8,13 +8,16 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
-		Release|Any CPU = Release|Any CPU
+		Release-Linux-x64|Any CPU = Release-Linux-x64|Any CPU
+		Release-Win-x64|Any CPU = Release-Win-x64|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{A7BF7FE2-0CD1-40B2-B677-F0F7BBF53B1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A7BF7FE2-0CD1-40B2-B677-F0F7BBF53B1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A7BF7FE2-0CD1-40B2-B677-F0F7BBF53B1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A7BF7FE2-0CD1-40B2-B677-F0F7BBF53B1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7BF7FE2-0CD1-40B2-B677-F0F7BBF53B1E}.Release-Linux-x64|Any CPU.ActiveCfg = Release-Linux-x64|Any CPU
+		{A7BF7FE2-0CD1-40B2-B677-F0F7BBF53B1E}.Release-Linux-x64|Any CPU.Build.0 = Release-Linux-x64|Any CPU
+		{A7BF7FE2-0CD1-40B2-B677-F0F7BBF53B1E}.Release-Win-x64|Any CPU.ActiveCfg = Release-Win-x64|Any CPU
+		{A7BF7FE2-0CD1-40B2-B677-F0F7BBF53B1E}.Release-Win-x64|Any CPU.Build.0 = Release-Win-x64|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

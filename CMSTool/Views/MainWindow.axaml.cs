@@ -1,30 +1,24 @@
 ﻿using System;
-using System.IO.Compression;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Text;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
-using Avalonia.Threading;
-using System.Threading.Tasks;
-using System.Media;
-using MsBox.Avalonia;
-using MsBox.Avalonia.Enums;
-using MsBox.Avalonia.Dto;
-using MsBox.Avalonia.Models;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using Avalonia.Media;
-using FGCMSTool.ViewModels;
 using Newtonsoft.Json;
-using System.Text.Json.Nodes;
-using System.Text.Json;
-using System.Collections;
-using JsonSerializer = Newtonsoft.Json.JsonSerializer;
 using Newtonsoft.Json.Linq;
-using SkiaSharp;
-using System.Net.Http.Json;
+using JsonSerializer = Newtonsoft.Json.JsonSerializer;
+using Avalonia.Media;
+using Avalonia;
+using Avalonia.Platform;
+
+
+
+#if RELEASE_WIN_X64 || DEBUG
+using System.Media;
+#endif
 
 namespace FGCMSTool.Views
 {
@@ -159,7 +153,9 @@ namespace FGCMSTool.Views
                     ProcessContentJson(outputJson, contentOut);
 
                 ProgressState.Text = $"Idle - Content was decrypted as {contentOut}";
+#if RELEASE_WIN_X64 || DEBUG
                 SystemSounds.Asterisk.Play();
+#endif
 
                 Array.Clear(outputJson);
                 Array.Clear(cmsBytes);
@@ -168,7 +164,9 @@ namespace FGCMSTool.Views
             {
                 WriteLog(ex, $"Cannot decrypt content file - IsV2 {isV2} - Xor {SettingsManager.Settings.SavedSettings.XorKey}");
                 ProgressState.Text = $"Decryption - {ErrorDefault}";
+#if RELEASE_WIN_X64 || DEBUG
                 SystemSounds.Exclamation.Play();
+#endif
             }
         }
 
@@ -215,7 +213,9 @@ namespace FGCMSTool.Views
             {
                 ProgressState.Text = $"Decryption - {ErrorDefault}";
                 WriteLog(ex, $"Cannot write decrypted content file - Decrypt start {SettingsManager.Settings.SavedSettings.DecryptStrat}");
+#if RELEASE_WIN_X64 || DEBUG
                 SystemSounds.Exclamation.Play();
+#endif
             }
 
             Array.Clear(json);
@@ -260,13 +260,17 @@ namespace FGCMSTool.Views
                 }
 
                 ProgressState.Text = $"Idle - Content was encrypted as {SettingsManager.Settings.SavedSettings.EncryptStrart}";
+#if RELEASE_WIN_X64 || DEBUG
                 SystemSounds.Asterisk.Play();
+#endif
             }
             catch (Exception ex)
             {
                 ProgressState.Text = $"Encryption - {ErrorDefault}";
                 WriteLog(ex, $"Cannot encrypt content file - Encrypt version {SettingsManager.Settings.SavedSettings.EncryptStrart}");
+#if RELEASE_WIN_X64 || DEBUG
                 SystemSounds.Exclamation.Play();
+#endif
             }
         }
 

@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Avalonia.Media;
 using FGCMSTool.ViewModels;
 using static FGCMSTool.SettingsManager;
 
@@ -12,6 +13,7 @@ namespace FGCMSTool.Views
         public SettingsWindow()
         {
             InitializeComponent();
+
             Loaded += (sender, e) =>
             {
                 EncryptCombo.SelectedIndex = (int)Settings.SavedSettings.EncryptStrart;
