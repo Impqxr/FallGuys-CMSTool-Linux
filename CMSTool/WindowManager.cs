@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,7 +20,7 @@ namespace FGCMSTool
             get => _instance ??= new WindowManager();
         }
 
-        List<Window> ActiveWindows;
+        List<Window>? ActiveWindows;
 
         public void Setup()
         {
@@ -31,15 +32,16 @@ namespace FGCMSTool
 
         void ProcessTheme(PlatformThemeVariant theme)
         {
-
             for (int i = 0; i < ActiveWindows.Count; i++)
             {
                 Window? window = ActiveWindows[i];
                 switch (theme)
                 {
                     case PlatformThemeVariant.Light:
+                        window.Background = new SolidColorBrush(Color.FromRgb(255, 255, 255), 80);
                         break;
                     case PlatformThemeVariant.Dark:
+                        window.Background = new SolidColorBrush(Color.FromRgb(0, 0, 0), 150);
                         break;
                 }
             }
@@ -48,13 +50,17 @@ namespace FGCMSTool
         public void SetupWindow(Window window)
         {
             ActiveWindows ??= [];
-
             ActiveWindows.Add(window);
+            ProcessTheme(Application.Current.PlatformSettings.GetColorValues().ThemeVariant);
+            window.Closed += (_, _) =>
+            {
+                RemoveWindow(window);
+            };
         }
 
         public void RemoveWindow(Window window)
         { 
-            ActiveWindows.Remove(window); 
+            ActiveWindows?.Remove(window); 
         }
     }
 }

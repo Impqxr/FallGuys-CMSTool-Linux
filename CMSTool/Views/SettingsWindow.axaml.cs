@@ -1,9 +1,6 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Media;
-using FGCMSTool.ViewModels;
 using static FGCMSTool.SettingsManager;
 
 namespace FGCMSTool.Views

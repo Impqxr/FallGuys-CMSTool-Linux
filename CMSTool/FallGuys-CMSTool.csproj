@@ -48,5 +48,8 @@
     <Compile Update="Views\SettingsWindow.axaml.cs">
       <DependentUpon>SettingsWindow.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\DlcDownloadWindow.axaml.cs">
+      <DependentUpon>DlcDownloadWindow.axaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>

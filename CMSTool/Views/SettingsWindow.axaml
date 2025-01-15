@@ -5,7 +5,7 @@
         mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="330"
         x:Class="FGCMSTool.Views.SettingsWindow"
         Title="СMS Tool - Settings"
-		TransparencyLevelHint="AcrylicBlur"
+		TransparencyLevelHint="AcrylicBlur,Blur,Transparent"
         Background="Transparent"
 		Width="600"
 		Height="330"

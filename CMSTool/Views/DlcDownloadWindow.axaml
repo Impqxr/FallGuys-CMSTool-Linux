@@ -1,0 +1,43 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="340"
+        x:Class="FGCMSTool.Views.DlcWindow"
+        Title="СMS Tool"
+		TransparencyLevelHint="AcrylicBlur,Blur,Transparent"
+        Background="Transparent"
+		Width="600"
+		Height="340"
+		CanResize="False"
+		ExtendClientAreaToDecorationsHint="True"
+		WindowStartupLocation="CenterScreen">
+
+	<Panel>
+		<StackPanel>
+			<Label IsHitTestVisible="False" Margin="0,5,0,0" HorizontalAlignment="Center">СMS Tool - Images Download</Label>
+			<Separator VerticalAlignment="Top" Margin="10,2,10,0"/>
+			<TextBlock Text="You can close this window if you want to stop download process" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Margin="10,5,10,0"/>
+		</StackPanel>
+		
+		<Grid Margin="0,55,0,25">
+			<Border Grid.Row="1" BorderThickness="1" BorderBrush="Gray" CornerRadius="5">
+				<ScrollViewer x:Name="DownloadProgressLog" Margin="0, 0, 0, 0">
+				<ItemsControl x:Name="LogsControl">
+					<ItemsControl.ItemTemplate>
+						<DataTemplate>
+							<TextBlock Text="{Binding}" Margin="2" />
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+			</ScrollViewer>
+				</Border>
+		</Grid>
+		<Grid>
+			<StackPanel Grid.Row="2" VerticalAlignment="Bottom" Margin="0">
+				<ProgressBar x:Name="DownloadProgress" Height="25"
+							 Minimum="0" Maximum="100" Value="0" ShowProgressText="True"/>
+			</StackPanel>
+		</Grid>
+	</Panel>
+</Window>
