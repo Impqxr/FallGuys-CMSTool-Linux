@@ -5,7 +5,7 @@
         mc:Ignorable="d" d:DesignWidth="450" d:DesignHeight="250"
         x:Class="FGCMSTool.Views.AboutWindow"
         Title="CMS Tool - About"
-		TransparencyLevelHint="AcrylicBlur"
+		TransparencyLevelHint="AcrylicBlur,Blur,Transparent"
         Background="Transparent"
 		Width="450"
 		Height="250"

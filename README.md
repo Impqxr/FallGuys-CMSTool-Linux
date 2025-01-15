@@ -19,7 +19,7 @@
 ### Encryption
 - Select `.json` file of your content (or `_meta.json` if you decrypted content into parts)
 - Hit the `"Encrypt"` button and wait for a moment 
-- Once done check the `"Encrypted_Output"` folder (`Open -> Encoded Output`). There you'll find the content_v2.gdata file (or content_v1, if you selected it in settings)
+- Once done check the `"Encrypted_Output"` folder (`Open -> Encoded Output`). There you'll find the `content_v2.gdata` file (or `content_v1`, if you selected it in settings)
 
 ## Credits 
 - Made using [Avalonia UI](https://github.com/AvaloniaUI/Avalonia)

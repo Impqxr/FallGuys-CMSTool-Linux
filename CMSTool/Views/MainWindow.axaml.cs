@@ -10,11 +10,6 @@ using Avalonia.Platform.Storage;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using JsonSerializer = Newtonsoft.Json.JsonSerializer;
-using Avalonia.Media;
-using Avalonia;
-using Avalonia.Platform;
-
-
 
 #if RELEASE_WIN_X64 || DEBUG
 using System.Media;
@@ -29,6 +24,7 @@ namespace FGCMSTool.Views
         readonly string DecryptionOutputDir;
         readonly string EncryptionOutputDir;
         readonly string ImagesOutputDir;
+        readonly string DownloadedDlcImagesDir;
         readonly string LogsDir;
         public MainWindow()
         {
@@ -48,6 +44,10 @@ namespace FGCMSTool.Views
             if (!Directory.Exists(ImagesOutputDir))
                 Directory.CreateDirectory(ImagesOutputDir);
 
+            DownloadedDlcImagesDir = Path.Combine(baseDir, "DlcImages_Output");
+            if (!Directory.Exists(DownloadedDlcImagesDir))
+                Directory.CreateDirectory(DownloadedDlcImagesDir);
+
             LogsDir = Path.Combine(baseDir, "Logs");
             if (!Directory.Exists(LogsDir))
                 Directory.CreateDirectory(LogsDir);
@@ -59,18 +59,20 @@ namespace FGCMSTool.Views
         async void DisplayAbout(object sender, RoutedEventArgs e)
         {
             var aboutWindow = new AboutWindow();
+            WindowManager.Instance.SetupWindow(aboutWindow);
             await aboutWindow.ShowDialog(this);
         }
 
         async void DisplaySettings(object sender, RoutedEventArgs e)
         {
             var settingsWindow = new SettingsWindow();
+            WindowManager.Instance.SetupWindow(settingsWindow);
             await settingsWindow.ShowDialog(this);
         }
 
         async void TogglePicker(bool folderPicker, string pickerName, TextBox textBox)
         {
-            var topLevel = TopLevel.GetTopLevel(this);
+            var topLevel = GetTopLevel(this);
             if (topLevel == null)
                 return;
 
@@ -118,6 +120,32 @@ namespace FGCMSTool.Views
             return true;
         }
 
+        byte[] GetDecryptedContentBytes(string path, byte[] xor, bool isV2)
+        {
+            var cmsBytes = File.ReadAllBytes(path);
+
+            XorTask(ref cmsBytes, xor);
+
+            if (isV2)
+            {
+                using MemoryStream memoryStream = new();
+                using MemoryStream stream = new(cmsBytes);
+                using GZipStream gZipStream = new(stream, CompressionMode.Decompress);
+                gZipStream.CopyTo(memoryStream);
+                return memoryStream.ToArray();
+            }
+            else
+            {
+                return cmsBytes;
+            }
+        }
+
+        bool IsContentV2(string path)
+        {
+            var extension = Path.GetExtension(path);
+            return !string.IsNullOrEmpty(extension) && extension == ".gdata";
+        }
+
         private void DecodeContent(object sender, RoutedEventArgs e)
         {
             var cmsPath = CMSPath_Encrypted.Text;
@@ -126,36 +154,19 @@ namespace FGCMSTool.Views
                 return;
 
             byte[] xorKey = Encoding.UTF8.GetBytes(SettingsManager.Settings.SavedSettings.XorKey);
-            var extension = Path.GetExtension(cmsPath);
-            bool isV2 = !string.IsNullOrEmpty(extension) && extension == ".gdata";
+            bool isV2 = IsContentV2(cmsPath);
             string contentOut = isV2 ? "content_v2" : "content_v1";
 
             try
             {
                 ProgressState.Text = "Decryption - Working";
 
-                byte[] outputJson;
-                var cmsBytes = File.ReadAllBytes(cmsPath);
-
-                XorTask(ref cmsBytes, xorKey);
-
-                if (isV2)
-                {
-                    using MemoryStream memoryStream = new();
-                    using MemoryStream stream = new(cmsBytes);
-                    using GZipStream gZipStream = new(stream, CompressionMode.Decompress);
-                    gZipStream.CopyTo(memoryStream);
-                    outputJson = memoryStream.ToArray();
-                }
-                else
-                {
-                    outputJson = cmsBytes;
-                }
+                var outputJson = GetDecryptedContentBytes(cmsPath, xorKey, isV2);
 
                 if (!Directory.Exists(DecryptionOutputDir))
                     Directory.CreateDirectory(DecryptionOutputDir);
 
-                    ProcessContentJson(outputJson, contentOut);
+                ProcessContentJson(outputJson, contentOut);
 
                 ProgressState.Text = $"Idle - Content was decrypted as {contentOut}";
 #if RELEASE_WIN_X64 || DEBUG
@@ -163,7 +174,6 @@ namespace FGCMSTool.Views
 #endif
 
                 Array.Clear(outputJson);
-                Array.Clear(cmsBytes);
             }
             catch (Exception ex)
             {
@@ -175,16 +185,51 @@ namespace FGCMSTool.Views
             }
         }
 
+        void DownloadDlc(object sender, RoutedEventArgs e)
+        {
+            var cmsPath = CMSFetchDlcImages.Text;
+
+            if (!DefaultCheck("Dlc Download", cmsPath))
+                return;
+
+            try
+            {
+                ProgressState.Text = "Dlc Download - Starting...";
+                bool isV2 = IsContentV2(cmsPath);
+                string dirName = isV2 ? "content_v2" : "content_v1";
+                var outputJson = GetDecryptedContentBytes(cmsPath, Encoding.UTF8.GetBytes(SettingsManager.Settings.SavedSettings.XorKey), isV2);
+
+                Dictionary<string, object> cmsJson = JsonConvert.DeserializeObject<Dictionary<string, object>>(Encoding.UTF8.GetString(outputJson));
+                if (cmsJson != null && cmsJson.TryGetValue("dlc_images", out object? value))
+                {
+                    var dlcWindow = new DlcWindow(value as JArray, Path.Combine(DownloadedDlcImagesDir, dirName));
+                    ProgressState.Text = "Dlc Download - Hold on, this may take a while...";
+                    dlcWindow.Closed += (_, _) =>
+                    {
+                        if (!dlcWindow.isSuceed)
+                            ProgressState.Text = "Dlc Download - Download canceled";
+                        else
+                            ProgressState.Text = "Dlc Download - Done";
+                    };
+                    dlcWindow.ShowDialog(this);
+                }
+            }
+            catch
+            {
+
+            }
+        }
+
         private void DecodeImages(object sender, RoutedEventArgs e)
         {
             var mapPath = CMSImageFileMapPath.Text;
 
-            if (!DefaultCheck("Decode", mapPath))
+            if (!DefaultCheck("Images decode", mapPath))
                 return;
             
             try
             {
-                ProgressState.Text = "Decode - Working";
+                ProgressState.Text = "Images decode - Working";
                 
                 List<CMSImage> images = CMSImage.ReadCMSImages(mapPath);
                 StringBuilder sb = new StringBuilder();
@@ -200,7 +245,7 @@ namespace FGCMSTool.Views
                 if (!Directory.Exists(ImagesOutputDir))
                     Directory.CreateDirectory(ImagesOutputDir);
                 
-                ProgressState.Text = $"Idle - Images decoded to {Path.GetFileName(ImagesOutputDir)}";
+                ProgressState.Text = $"Idle - Images decoded";
                 #if RELEASE_WIN_X64 || DEBUG
                     SystemSounds.Asterisk.Play();
                 #endif
@@ -208,10 +253,10 @@ namespace FGCMSTool.Views
             catch (Exception ex)
             {
                 WriteLog(ex, "Cannot decode images");
-                ProgressState.Text = $"Decode - {ErrorDefault}";
-                #if RELEASE_WIN_X64 || DEBUG
-                    SystemSounds.Exclamation.Play();
-                #endif
+                ProgressState.Text = $"Images decode - {ErrorDefault}";
+#if RELEASE_WIN_X64 || DEBUG
+                SystemSounds.Exclamation.Play();
+#endif
             }
         }
 
@@ -221,7 +266,7 @@ namespace FGCMSTool.Views
 
             try
             {
-                switch (SettingsManager.Settings.SavedSettings.DecryptStrat)
+                switch (SettingsManager.Settings?.SavedSettings?.DecryptStrat)
                 {
                     case SettingsManager.DecryptStrat.Default:
                         File.WriteAllText(outputPath, Encoding.UTF8.GetString(json));
@@ -257,7 +302,7 @@ namespace FGCMSTool.Views
             catch (Exception ex)
             {
                 ProgressState.Text = $"Decryption - {ErrorDefault}";
-                WriteLog(ex, $"Cannot write decrypted content file - Decrypt start {SettingsManager.Settings.SavedSettings.DecryptStrat}");
+                WriteLog(ex, $"Cannot write decrypted content file - Decrypt start {SettingsManager.Settings?.SavedSettings?.DecryptStrat}");
 #if RELEASE_WIN_X64 || DEBUG
                 SystemSounds.Exclamation.Play();
 #endif
@@ -275,7 +320,7 @@ namespace FGCMSTool.Views
 
             try
             {
-                byte[] xorKey = Encoding.UTF8.GetBytes(SettingsManager.Settings.SavedSettings.XorKey);
+                byte[] xorKey = Encoding.UTF8.GetBytes(SettingsManager.Settings?.SavedSettings?.XorKey);
                 byte[] cmsBytes = GetContentBytes(cmsPath);
 
                 ProgressState.Text = "Encryption - Working";
@@ -333,6 +378,7 @@ namespace FGCMSTool.Views
                     finalCms[Path.GetFileNameWithoutExtension(jsonFile)] = JsonConvert.DeserializeObject(File.ReadAllText(jsonFile));
                 }
                 return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(finalCms, Formatting.None));
+
             }
         }
 
@@ -375,6 +421,7 @@ namespace FGCMSTool.Views
         void OpenPicker_Encrypted(object sender, RoutedEventArgs e) => TogglePicker(false, "Select content file", CMSPath_Encrypted);
         void OpenPicker_Decrypted(object sender, RoutedEventArgs e) => TogglePicker(false, "Select content JSON or ._meta.json if content was splitted by parts", CMSPath_Decrypted);
         void OpenPicker_ImageFileMap(object sender, RoutedEventArgs e) => TogglePicker(false, "Select file map", CMSImageFileMapPath);
+        void OpenPicker_DLCImagesContent(object sender, RoutedEventArgs e) => TogglePicker(false, "Select content file", CMSFetchDlcImages);
         void OpenOutput_Decrypted(object sender, RoutedEventArgs e) => OpenDir(DecryptionOutputDir);
         void OpenOutput_Encrypted(object sender, RoutedEventArgs e) => OpenDir(EncryptionOutputDir);
         void OpenOutput_Images(object sender, RoutedEventArgs e) => OpenDir(ImagesOutputDir);

@@ -3,7 +3,7 @@
         xmlns:vm="using:FGCMSTool.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="300"
+        mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="340"
         x:Class="FGCMSTool.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
@@ -11,10 +11,18 @@
 		TransparencyLevelHint="AcrylicBlur,Blur,Transparent"
         Background="Transparent"
 		Width="600"
-		Height="400"
+		Height="340"
 		CanResize="False"
 		ExtendClientAreaToDecorationsHint="True"
 		WindowStartupLocation="CenterScreen">
+
+	<Window.Styles>
+		<Style Selector="TabItem">
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="Padding" Value="10, 5"/>
+		</Style>
+	</Window.Styles>
+	
 <Panel>
     <DockPanel VerticalAlignment="Top" HorizontalAlignment="Left">
         <Menu DockPanel.Dock="Top">
@@ -32,72 +40,100 @@
     <Label IsHitTestVisible="False" Margin="0,5,0,0" HorizontalAlignment="Center">СMS Tool</Label>
     <Separator VerticalAlignment="Top" Margin="10,30,10,0"/>
     
-    <StackPanel Margin="15,40,15,0" Spacing="5" VerticalAlignment="Stretch">
-	    <Grid Margin="0,5,0,5" ColumnDefinitions="*,Auto,*" VerticalAlignment="Center">
-		    <Border BorderBrush="Gray" BorderThickness="0,1,0,0" VerticalAlignment="Center" Margin="0,0,5,0" Grid.Column="0"/>
-		    <TextBlock Text="Decode images" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1"/>
-		    <Border BorderBrush="Gray" BorderThickness="0,1,0,0" VerticalAlignment="Center" Margin="5,0,0,0" Grid.Column="2"/>
-	    </Grid>
-	    <Grid Margin="0,5,0,0">
-		    <Grid.ColumnDefinitions>
-			    <ColumnDefinition Width="*"/>
-			    <ColumnDefinition Width="Auto"/>
-		    </Grid.ColumnDefinitions>
-		    <TextBox x:Name="CMSImageFileMapPath" Watermark="Path to file map (files.map)" Grid.Column="0" Margin="0,0,5,0"/>
-		    <Button Content="Browse" Grid.Column="1" Click="OpenPicker_ImageFileMap"/>
-	    </Grid>
-	    <Button
-		    Content="Decode (~5 seconds)"
-		    HorizontalAlignment="Stretch"
-		    HorizontalContentAlignment="Center"
-		    VerticalContentAlignment="Center"
-		    Click="DecodeImages"/>
-	    
-	    <Grid Margin="0,5,0,5" ColumnDefinitions="*,Auto,*" VerticalAlignment="Center">
-			<Border BorderBrush="Gray" BorderThickness="0,1,0,0" VerticalAlignment="Center" Margin="0,0,5,0" Grid.Column="0"/>
-			<TextBlock Text="Decrypt" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1"/>
-			<Border BorderBrush="Gray" BorderThickness="0,1,0,0" VerticalAlignment="Center" Margin="5,0,0,0" Grid.Column="2"/>
-		</Grid>
-        <Grid Margin="0,5,0,0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <TextBox x:Name="CMSPath_Encrypted" Watermark="Path to content file (v1 or v2)" Grid.Column="0" Margin="0,0,5,0"/>
-            <Button Content="Browse" Grid.Column="1" Click="OpenPicker_Encrypted"/>
-        </Grid>
-        <Button
-            Content="Decode"
-            HorizontalAlignment="Stretch"
-            HorizontalContentAlignment="Center"
-            VerticalContentAlignment="Center"
-            Click="DecodeContent"/>
+    <StackPanel Margin="0,30,0,0" Spacing="0" VerticalAlignment="Stretch">
+		<TabControl Margin="2">
+			<TabItem Header="CMS Utils">
+				<StackPanel Margin="0" Spacing="5" VerticalAlignment="Stretch">
+					<Grid Margin="0,5,0,5" ColumnDefinitions="*,Auto,*" VerticalAlignment="Center">
+						<Border BorderBrush="Gray" BorderThickness="0,1,0,0" VerticalAlignment="Center" Margin="0,0,5,0" Grid.Column="0"/>
+						<TextBlock Text="Decrypt" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1"/>
+						<Border BorderBrush="Gray" BorderThickness="0,1,0,0" VerticalAlignment="Center" Margin="5,0,0,0" Grid.Column="2"/>
+					</Grid>
+					<Grid Margin="0,5,0,0">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="Auto"/>
+						</Grid.ColumnDefinitions>
+						<TextBox x:Name="CMSPath_Encrypted" Watermark="Path to content file (v1 or v2)" Grid.Column="0" Margin="0,0,5,0"/>
+						<Button Content="Browse" Grid.Column="1" Click="OpenPicker_Encrypted"/>
+					</Grid>
+					<Button
+						Content="Decode"
+						HorizontalAlignment="Stretch"
+						HorizontalContentAlignment="Center"
+						VerticalContentAlignment="Center"
+						Click="DecodeContent"/>
+					
 
-		<Grid Margin="0,5,0,5" ColumnDefinitions="*,Auto,*" VerticalAlignment="Center">
-			<Border BorderBrush="Gray" BorderThickness="0,1,0,0" VerticalAlignment="Center" Margin="0,0,5,0" Grid.Column="0"/>
-			<TextBlock Text="Encrypt" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1"/>
-			<Border BorderBrush="Gray" BorderThickness="0,1,0,0" VerticalAlignment="Center" Margin="5,0,0,0" Grid.Column="2"/>
-		</Grid>
+					<Grid Margin="0,5,0,5" ColumnDefinitions="*,Auto,*" VerticalAlignment="Center">
+						<Border BorderBrush="Gray" BorderThickness="0,1,0,0" VerticalAlignment="Center" Margin="0,0,5,0" Grid.Column="0"/>
+						<TextBlock Text="Encrypt" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1"/>
+						<Border BorderBrush="Gray" BorderThickness="0,1,0,0" VerticalAlignment="Center" Margin="5,0,0,0" Grid.Column="2"/>
+					</Grid>
 
-		<Grid Margin="0,5,0,0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <TextBox x:Name="CMSPath_Decrypted" Watermark="Path to content as json OR path to ._meta.json if by parts" Grid.Column="0" Margin="0,0,5,0"/>
-            <Button Content="Browse" Grid.Column="1" Click="OpenPicker_Decrypted"/>
-        </Grid>
-        <Button
-            Content="Encode"
-            HorizontalAlignment="Stretch"
-            HorizontalContentAlignment="Center"
-            VerticalContentAlignment="Center"
-			Click="EncryptContent"/>
-
+					<Grid Margin="0,5,0,0">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="Auto"/>
+						</Grid.ColumnDefinitions>
+						<TextBox x:Name="CMSPath_Decrypted" Watermark="Path to content as json OR path to ._meta.json if by parts" Grid.Column="0" Margin="0,0,5,0"/>
+						<Button Content="Browse" Grid.Column="1" Click="OpenPicker_Decrypted"/>
+					</Grid>
+					<Button
+						Content="Encode"
+						HorizontalAlignment="Stretch"
+						HorizontalContentAlignment="Center"
+						VerticalContentAlignment="Center"
+						Click="EncryptContent"/>
+				</StackPanel>
+			</TabItem>
+			<TabItem Header="DLC Images">
+				<StackPanel Margin="0" Spacing="5" VerticalAlignment="Stretch">
+					<Grid Margin="0,5,0,5" ColumnDefinitions="*,Auto,*" VerticalAlignment="Center">
+						<Border BorderBrush="Gray" BorderThickness="0,1,0,0" VerticalAlignment="Center" Margin="0,0,5,0" Grid.Column="0"/>
+						<TextBlock Text="Decrypt local images" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1"/>
+						<Border BorderBrush="Gray" BorderThickness="0,1,0,0" VerticalAlignment="Center" Margin="5,0,0,0" Grid.Column="2"/>
+					</Grid>
+					<Grid Margin="0,5,0,0">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="Auto"/>
+						</Grid.ColumnDefinitions>
+						<TextBox x:Name="CMSImageFileMapPath" Watermark="Path to file map (files.map)" Grid.Column="0" Margin="0,0,5,0"/>
+						<Button Content="Browse" Grid.Column="1" Click="OpenPicker_ImageFileMap"/>
+					</Grid>
+					<Button
+						Content="Decode"
+						HorizontalAlignment="Stretch"
+						HorizontalContentAlignment="Center"
+						VerticalContentAlignment="Center"
+						Click="DecodeImages"/>
+					<Grid Margin="0,5,0,5" ColumnDefinitions="*,Auto,*" VerticalAlignment="Center">
+						<Border BorderBrush="Gray" BorderThickness="0,1,0,0" VerticalAlignment="Center" Margin="0,0,5,0" Grid.Column="0"/>
+						<TextBlock Text="Download DLC Images" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1"/>
+						<Border BorderBrush="Gray" BorderThickness="0,1,0,0" VerticalAlignment="Center" Margin="5,0,0,0" Grid.Column="2"/>
+					</Grid>
+					<Grid Margin="0,5,0,0">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="Auto"/>
+						</Grid.ColumnDefinitions>
+						<TextBox x:Name="CMSFetchDlcImages" Watermark="Path to encrypted content (v1 or v2)" Grid.Column="0" Margin="0,0,5,0"/>
+						<Button Content="Browse" Grid.Column="1" Click="OpenPicker_DLCImagesContent"/>
+					</Grid>
+					<Button
+						Content="Begin Download"
+						HorizontalAlignment="Stretch"
+						HorizontalContentAlignment="Center"
+						VerticalContentAlignment="Center"
+						Click="DownloadDlc"/>
+				</StackPanel>
+			</TabItem>
+		</TabControl>
     </StackPanel>
 
 	<Grid>
-		<StackPanel Grid.Row="2" VerticalAlignment="Bottom" Margin="0">
+		<StackPanel Grid.Row="1" VerticalAlignment="Bottom" Margin="0">
 			<TextBlock x:Name="ProgressState" Text="Idle" Margin="5"/>
 		</StackPanel>
 	</Grid>

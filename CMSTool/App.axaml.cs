@@ -23,10 +23,13 @@ namespace FGCMSTool
                 // Avoid duplicate validations from both Avalonia and the CommunityToolkit. 
                 // More info: https://docs.avaloniaui.net/docs/guides/development-guides/data-validation#manage-validationplugins
                 DisableAvaloniaDataAnnotationValidation();
+
+                WindowManager.Instance.Setup();
                 desktop.MainWindow = new MainWindow
                 {
                     DataContext = null,
                 };
+                WindowManager.Instance.SetupWindow(desktop.MainWindow);
             }
 
             base.OnFrameworkInitializationCompleted();
