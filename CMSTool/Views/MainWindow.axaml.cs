@@ -34,7 +34,7 @@ namespace FGCMSTool.Views
         {
             InitializeComponent();
 
-            var baseDir = Path.GetDirectoryName(AppContext.BaseDirectory);
+            var baseDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "CMSTool");
 
             DecryptionOutputDir = Path.Combine(baseDir, "Decrypted_Output");
             if (!Directory.Exists(DecryptionOutputDir))
