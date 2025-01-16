@@ -10,6 +10,8 @@ using Avalonia.Platform.Storage;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using JsonSerializer = Newtonsoft.Json.JsonSerializer;
+using FGCMSTool.Managers;
+using static FGCMSTool.Managers.LocalizationManager;
 
 #if RELEASE_WIN_X64 || DEBUG
 using System.Media;
@@ -19,8 +21,6 @@ namespace FGCMSTool.Views
 {
     public partial class MainWindow : Window
     {
-        const string ErrorDefault = "Something went wrong, check logs for details";
-
         readonly string DecryptionOutputDir;
         readonly string EncryptionOutputDir;
         readonly string ImagesOutputDir;
@@ -28,9 +28,10 @@ namespace FGCMSTool.Views
         readonly string LogsDir;
         public MainWindow()
         {
-            InitializeComponent();
-
             var baseDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "CMSTool");
+            LocalizationManager.Setup(baseDir);
+
+            InitializeComponent();
 
             DecryptionOutputDir = Path.Combine(baseDir, "Decrypted_Output");
             if (!Directory.Exists(DecryptionOutputDir))
@@ -39,7 +40,7 @@ namespace FGCMSTool.Views
             EncryptionOutputDir = Path.Combine(baseDir, "Encrypted_Output");
             if (!Directory.Exists(EncryptionOutputDir))
                 Directory.CreateDirectory(EncryptionOutputDir);
-            
+
             ImagesOutputDir = Path.Combine(baseDir, "Images_Output");
             if (!Directory.Exists(ImagesOutputDir))
                 Directory.CreateDirectory(ImagesOutputDir);
@@ -54,6 +55,7 @@ namespace FGCMSTool.Views
 
             SettingsManager.Settings = new SettingsManager();
             SettingsManager.Settings.Load(baseDir);
+
         }
 
         async void DisplayAbout(object sender, RoutedEventArgs e)
@@ -107,13 +109,13 @@ namespace FGCMSTool.Views
         {
             if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
             {
-                ProgressState.Text = $"{sender} - Please, put a valid file";
+                ProgressState.Text = string.Format(LocalizedString("def_check_file_fail", [sender]));
                 return false;
             }
 
             if (string.IsNullOrEmpty(SettingsManager.Settings.SavedSettings.XorKey))
             {
-                ProgressState.Text = $"{sender} - XorKey can't be blank";
+                ProgressState.Text = string.Format(LocalizedString("def_check_xor_fail", [sender])); ;
                 return false;
             }
 
@@ -150,7 +152,7 @@ namespace FGCMSTool.Views
         {
             var cmsPath = CMSPath_Encrypted.Text;
 
-            if (!DefaultCheck("Decryption", cmsPath))
+            if (!DefaultCheck(LocalizedString("task_decryption"), cmsPath))
                 return;
 
             byte[] xorKey = Encoding.UTF8.GetBytes(SettingsManager.Settings.SavedSettings.XorKey);
@@ -159,7 +161,7 @@ namespace FGCMSTool.Views
 
             try
             {
-                ProgressState.Text = "Decryption - Working";
+                ProgressState.Text = LocalizedString("task_decryption_active");
 
                 var outputJson = GetDecryptedContentBytes(cmsPath, xorKey, isV2);
 
@@ -168,7 +170,7 @@ namespace FGCMSTool.Views
 
                 ProcessContentJson(outputJson, contentOut);
 
-                ProgressState.Text = $"Idle - Content was decrypted as {contentOut}";
+                ProgressState.Text = string.Format(LocalizedString("task_decryption_done"), [contentOut]);
 #if RELEASE_WIN_X64 || DEBUG
                 SystemSounds.Asterisk.Play();
 #endif
@@ -177,8 +179,8 @@ namespace FGCMSTool.Views
             }
             catch (Exception ex)
             {
-                WriteLog(ex, $"Cannot decrypt content file - IsV2 {isV2} - Xor {SettingsManager.Settings.SavedSettings.XorKey}");
-                ProgressState.Text = $"Decryption - {ErrorDefault}";
+                WriteLog(ex, LocalizedString("task_decryption_fail_log_01", [isV2, SettingsManager.Settings.SavedSettings.XorKey]));
+                ProgressState.Text = LocalizedString("task_decryption_fail");
 #if RELEASE_WIN_X64 || DEBUG
                 SystemSounds.Exclamation.Play();
 #endif
@@ -189,13 +191,14 @@ namespace FGCMSTool.Views
         {
             var cmsPath = CMSFetchDlcImages.Text;
 
-            if (!DefaultCheck("Dlc Download", cmsPath))
+            if (!DefaultCheck(LocalizedString("task_dlc_cms"), cmsPath))
                 return;
 
+            bool isV2 = IsContentV2(cmsPath);
             try
             {
-                ProgressState.Text = "Dlc Download - Starting...";
-                bool isV2 = IsContentV2(cmsPath);
+                ProgressState.Text = LocalizedString("task_dlc_cms_active");
+
                 string dirName = isV2 ? "content_v2" : "content_v1";
                 var outputJson = GetDecryptedContentBytes(cmsPath, Encoding.UTF8.GetBytes(SettingsManager.Settings.SavedSettings.XorKey), isV2);
 
@@ -203,20 +206,24 @@ namespace FGCMSTool.Views
                 if (cmsJson != null && cmsJson.TryGetValue("dlc_images", out object? value))
                 {
                     var dlcWindow = new DlcWindow(value as JArray, Path.Combine(DownloadedDlcImagesDir, dirName));
-                    ProgressState.Text = "Dlc Download - Hold on, this may take a while...";
+                    ProgressState.Text = LocalizedString("task_dlc_cms_active_long");
                     dlcWindow.Closed += (_, _) =>
                     {
                         if (!dlcWindow.isSuceed)
-                            ProgressState.Text = "Dlc Download - Download canceled";
+                            ProgressState.Text = LocalizedString("task_dlc_cms_exit");
                         else
-                            ProgressState.Text = "Dlc Download - Done";
+                            ProgressState.Text = LocalizedString("task_dlc_cms_done");
                     };
                     dlcWindow.ShowDialog(this);
                 }
             }
-            catch
+            catch (Exception ex)
             {
-
+                WriteLog(ex, LocalizedString("task_dlc_cms_fail_log", [isV2, SettingsManager.Settings.SavedSettings.XorKey]));
+                ProgressState.Text = LocalizedString("task_dlc_cms_fail");
+#if RELEASE_WIN_X64 || DEBUG
+                SystemSounds.Exclamation.Play();
+#endif
             }
         }
 
@@ -224,13 +231,13 @@ namespace FGCMSTool.Views
         {
             var mapPath = CMSImageFileMapPath.Text;
 
-            if (!DefaultCheck("Images decode", mapPath))
+            if (!DefaultCheck(LocalizedString("task_dlc"), mapPath))
                 return;
-            
+
             try
             {
-                ProgressState.Text = "Images decode - Working";
-                
+                ProgressState.Text = LocalizedString("task_dlc_active");
+
                 List<CMSImage> images = CMSImage.ReadCMSImages(mapPath);
                 StringBuilder sb = new StringBuilder();
 
@@ -239,21 +246,21 @@ namespace FGCMSTool.Views
                     sb.AppendLine(image.ToString());
                     image.WriteToPngFile(Path.Combine(ImagesOutputDir, image.Name + ".png"));
                 }
-                
+
                 File.WriteAllText(Path.Combine(ImagesOutputDir, "files.map.txt"), sb.ToString());
 
                 if (!Directory.Exists(ImagesOutputDir))
                     Directory.CreateDirectory(ImagesOutputDir);
-                
-                ProgressState.Text = $"Idle - Images decoded";
-                #if RELEASE_WIN_X64 || DEBUG
-                    SystemSounds.Asterisk.Play();
-                #endif
+
+                ProgressState.Text = LocalizedString("task_dlc_done");
+#if RELEASE_WIN_X64 || DEBUG
+                SystemSounds.Asterisk.Play();
+#endif
             }
             catch (Exception ex)
             {
-                WriteLog(ex, "Cannot decode images");
-                ProgressState.Text = $"Images decode - {ErrorDefault}";
+                WriteLog(ex, LocalizedString("task_dlc_fail_log"));
+                ProgressState.Text = LocalizedString("task_dlc_fail");
 #if RELEASE_WIN_X64 || DEBUG
                 SystemSounds.Exclamation.Play();
 #endif
@@ -301,8 +308,8 @@ namespace FGCMSTool.Views
             }
             catch (Exception ex)
             {
-                ProgressState.Text = $"Decryption - {ErrorDefault}";
-                WriteLog(ex, $"Cannot write decrypted content file - Decrypt start {SettingsManager.Settings?.SavedSettings?.DecryptStrat}");
+                ProgressState.Text = LocalizedString("task_decryption_fail");
+                WriteLog(ex, LocalizedString("task_decryption_fail_log_02", [SettingsManager.Settings?.SavedSettings?.DecryptStrat]));
 #if RELEASE_WIN_X64 || DEBUG
                 SystemSounds.Exclamation.Play();
 #endif
@@ -315,7 +322,7 @@ namespace FGCMSTool.Views
         {
             var cmsPath = CMSPath_Decrypted.Text;
 
-            if (!DefaultCheck("Encryption", cmsPath))
+            if (!DefaultCheck(LocalizedString("task_encryption"), cmsPath))
                 return;
 
             try
@@ -323,7 +330,7 @@ namespace FGCMSTool.Views
                 byte[] xorKey = Encoding.UTF8.GetBytes(SettingsManager.Settings?.SavedSettings?.XorKey);
                 byte[] cmsBytes = GetContentBytes(cmsPath);
 
-                ProgressState.Text = "Encryption - Working";
+                ProgressState.Text = LocalizedString("task_encryption_active");
 
                 switch (SettingsManager.Settings.SavedSettings.EncryptStrart)
                 {
@@ -349,15 +356,15 @@ namespace FGCMSTool.Views
                         break;
                 }
 
-                ProgressState.Text = $"Idle - Content was encrypted as {SettingsManager.Settings.SavedSettings.EncryptStrart}";
+                ProgressState.Text = LocalizedString("task_encryption_done", [SettingsManager.Settings?.SavedSettings?.EncryptStrart]);
 #if RELEASE_WIN_X64 || DEBUG
                 SystemSounds.Asterisk.Play();
 #endif
             }
             catch (Exception ex)
             {
-                ProgressState.Text = $"Encryption - {ErrorDefault}";
-                WriteLog(ex, $"Cannot encrypt content file - Encrypt version {SettingsManager.Settings.SavedSettings.EncryptStrart}");
+                ProgressState.Text = LocalizedString("task_encryption_fail");
+                WriteLog(ex, LocalizedString("task_encryption_fail_log", [SettingsManager.Settings?.SavedSettings?.EncryptStrart]));
 #if RELEASE_WIN_X64 || DEBUG
                 SystemSounds.Exclamation.Play();
 #endif
@@ -404,27 +411,28 @@ namespace FGCMSTool.Views
             string log = $"ErrorLog_{DateTime.Now:yyyyMMdd_HHmmss}.txt";
             string output = $"{message}\n\n";
 
-            if (data is string strData)
+            if (data is string str)
             {
-                output += strData;
+                output += str;
             }
 
-            if (data is Exception exData)
+            if (data is Exception ex)
             {
-                output += $"Exception: {exData.Message}\n\nStack Trace: {exData.StackTrace}\n";
+                output += LocalizedString("log_exception", [ex.Message, ex.StackTrace]);
             }
 
             File.WriteAllText(Path.Combine(LogsDir, log), output);
         }
 
 
-        void OpenPicker_Encrypted(object sender, RoutedEventArgs e) => TogglePicker(false, "Select content file", CMSPath_Encrypted);
-        void OpenPicker_Decrypted(object sender, RoutedEventArgs e) => TogglePicker(false, "Select content JSON or ._meta.json if content was splitted by parts", CMSPath_Decrypted);
-        void OpenPicker_ImageFileMap(object sender, RoutedEventArgs e) => TogglePicker(false, "Select file map", CMSImageFileMapPath);
-        void OpenPicker_DLCImagesContent(object sender, RoutedEventArgs e) => TogglePicker(false, "Select content file", CMSFetchDlcImages);
+        void OpenPicker_Encrypted(object sender, RoutedEventArgs e) => TogglePicker(false, LocalizedString("picker_decode"), CMSPath_Encrypted);
+        void OpenPicker_Decrypted(object sender, RoutedEventArgs e) => TogglePicker(false, LocalizedString("picker_encode"), CMSPath_Decrypted);
+        void OpenPicker_ImageFileMap(object sender, RoutedEventArgs e) => TogglePicker(false, LocalizedString("picker_dlc"), CMSImageFileMapPath);
+        void OpenPicker_DLCImagesContent(object sender, RoutedEventArgs e) => TogglePicker(false, LocalizedString("picker_cms_dlc"), CMSFetchDlcImages);
         void OpenOutput_Decrypted(object sender, RoutedEventArgs e) => OpenDir(DecryptionOutputDir);
         void OpenOutput_Encrypted(object sender, RoutedEventArgs e) => OpenDir(EncryptionOutputDir);
         void OpenOutput_Images(object sender, RoutedEventArgs e) => OpenDir(ImagesOutputDir);
+        void OpenOutput_ImagesDLC(object sender, RoutedEventArgs e) => OpenDir(DownloadedDlcImagesDir);
         void OpenLogs(object sender, RoutedEventArgs e) => OpenDir(LogsDir);
     }
 }

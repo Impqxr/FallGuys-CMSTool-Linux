@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace FGCMSTool
+namespace FGCMSTool.Managers
 {
     public class SettingsManager
     {
@@ -37,9 +37,9 @@ namespace FGCMSTool
             {
                 return new SettingsJson
                 {
-                    XorKey = this.XorKey,
-                    DecryptStrat = this.DecryptStrat,
-                    EncryptStrart = this.EncryptStrart
+                    XorKey = XorKey,
+                    DecryptStrat = DecryptStrat,
+                    EncryptStrart = EncryptStrart
                 };
             }
         }
@@ -56,7 +56,7 @@ namespace FGCMSTool
 
         public void Load(string baseDir)
         {
-            ConfigPath = Path.Combine(baseDir, "config.json");
+            ConfigPath = Path.Combine(baseDir, "Assets", "config.json");
 
             try
             {
