@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using System.Diagnostics;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
@@ -14,7 +15,9 @@ namespace FGCMSTool.Views
 
             Loaded += (sender, e) =>
             {
-                AppVer.Text = string.Format(AppVer.Text, FileVersionInfo.GetVersionInfo(Environment.ProcessPath).FileVersion);
+                string[]? versionAndRev = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion.Split("+");
+                AppVer.Text = string.Format(AppVer.Text, versionAndRev != null && versionAndRev.Length > 0 ? versionAndRev[0] : "MISSING");
+                AppRev.Text = string.Format(AppRev.Text, versionAndRev != null && versionAndRev.Length > 1 ? versionAndRev[1].Substring(0, 7) : "MISSING");
             };
         }
 
