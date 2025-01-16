@@ -11,9 +11,7 @@
         pkgs.buildDotnetModule rec
         {
           # Someone help me to figure out the way to get the version normally or make dotnet see .git directory
-          packageVersion = builtins.readFile (pkgs.runCommand "extract-version" { } ''
-            grep -oP '<Version>\K[^<]+' ${self}/${projectFile} > $out
-          '');
+          packageVersion = builtins.elemAt (builtins.match ".*<Version>([a-zA-Z0-9._-]+)</Version>.*" (builtins.readFile "${self}/${projectFile}")) 0;
 
           name = "FallGuys-CMSTool";
           version = "${packageVersion}+${self.rev or self.dirtyRev}";
