@@ -14,7 +14,7 @@ namespace FGCMSTool.Managers
 {
     public class LocalizationManager
     {
-        static Dictionary<string, string> LangEntries;
+        static Dictionary<string, string>? LangEntries;
         const string linkDef = @"\{ref:(.*?)\}";
 
         public static void Setup(string basePath)
@@ -23,7 +23,7 @@ namespace FGCMSTool.Managers
             LangEntries = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(path));
         }
 
-        public static string LocalizedString(string key, object[] format = null)
+        public static string LocalizedString(string key, object[]? format = null)
         {
             if (LangEntries == null)
                 return $"NULL: {key}";
