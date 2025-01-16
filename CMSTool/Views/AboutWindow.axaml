@@ -15,10 +15,10 @@
 		<Label IsHitTestVisible="False" Margin="0,5,0,0" HorizontalAlignment="Center">СMS Tool - About</Label>
 		<Separator VerticalAlignment="Top" Margin="10,30,10,0"/>
 		<StackPanel Margin="20,40,20,0" Spacing="5">
-			<StackPanel Margin="0,10,0,10" Spacing="-10">
-				<TextBlock x:Name="AppVer" FontWeight="Bold" HorizontalAlignment="Center">CMS Tool V{0}</TextBlock>
-				<TextBlock x:Name="AppRev" FontWeight="Bold" HorizontalAlignment="Center">Revision: {0}</TextBlock>
-			</StackPanel>
+			<Grid Margin="0,5,0,0">
+				<TextBlock x:Name="AppVer" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,5">CMS Tool V{0}</TextBlock>
+				<TextBlock x:Name="AppRev" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,15,0,5">Revision: {0}</TextBlock>
+			</Grid>
 			<Button
 			   Content="GitHub Repository"
 			   HorizontalAlignment="Stretch"
