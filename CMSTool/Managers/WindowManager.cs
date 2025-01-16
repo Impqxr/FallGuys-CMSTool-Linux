@@ -9,7 +9,7 @@ using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Platform;
 
-namespace FGCMSTool
+namespace FGCMSTool.Managers
 {
     public class WindowManager
     {
@@ -59,8 +59,8 @@ namespace FGCMSTool
         }
 
         public void RemoveWindow(Window window)
-        { 
-            ActiveWindows?.Remove(window); 
+        {
+            ActiveWindows?.Remove(window);
         }
     }
 }

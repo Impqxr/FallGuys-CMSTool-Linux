@@ -4,7 +4,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="450" d:DesignHeight="250"
         x:Class="FGCMSTool.Views.AboutWindow"
-        Title="CMS Tool - About"
+		xmlns:local="clr-namespace:FGCMSTool.Managers"
+        Title="{local:LocalizedMarkup about_title}"
 		TransparencyLevelHint="AcrylicBlur,Blur,Transparent"
         Background="Transparent"
 		Width="450"
@@ -12,25 +13,34 @@
 		CanResize="False"
 		ExtendClientAreaToDecorationsHint="True">
 	<Panel>
-		<Label IsHitTestVisible="False" Margin="0,5,0,0" HorizontalAlignment="Center">СMS Tool - About</Label>
-		<Separator VerticalAlignment="Top" Margin="10,30,10,0"/>
+		<StackPanel>
+			<TextBlock Margin="0,8,0,0" HorizontalAlignment="Center" Text="{local:LocalizedMarkup about_title}" />
+			<Separator VerticalAlignment="Top" Margin="10,5,10,0"/>
+		</StackPanel>
+
 		<StackPanel Margin="20,40,20,0" Spacing="5">
-			<Grid Margin="0,5,0,0">
-				<TextBlock x:Name="AppVer" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,5">CMS Tool V{0}</TextBlock>
-				<TextBlock x:Name="AppRev" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,15,0,5">Revision: {0}</TextBlock>
-			</Grid>
+			<StackPanel Spacing="2" HorizontalAlignment="Center">
+				<TextBlock x:Name="AppVer" FontWeight="Bold" HorizontalAlignment="Center" Text="{local:LocalizedMarkup about_ver}" />
+				<TextBlock x:Name="AppRev" HorizontalAlignment="Center" Text="{local:LocalizedMarkup about_rev}" />
+			</StackPanel>
 			<Button
-			   Content="GitHub Repository"
+			   Content="{local:LocalizedMarkup about_repo}"
 			   HorizontalAlignment="Stretch"
 			   HorizontalContentAlignment="Center"
 			   VerticalContentAlignment="Center"
 			   Click="OpenGithubRepo"/>
 			<Button
-			   Content="Discord Server"
+			   Content="{local:LocalizedMarkup about_discord}"
 			   HorizontalAlignment="Stretch"
 			   HorizontalContentAlignment="Center"
 			   VerticalContentAlignment="Center"
 			   Click="OpenDiscord"/>
+			<Button
+			   Content="{local:LocalizedMarkup about_commit}"
+			   HorizontalAlignment="Stretch"
+			   HorizontalContentAlignment="Center"
+			   VerticalContentAlignment="Center"
+			   Click="OpenCommit"/>
 		</StackPanel>
 		</Panel>
 </Window>

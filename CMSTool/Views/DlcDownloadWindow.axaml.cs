@@ -11,6 +11,7 @@ using Avalonia.Controls;
 using Avalonia.Threading;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using static FGCMSTool.Managers.LocalizationManager;
 
 namespace FGCMSTool.Views
 {
@@ -72,16 +73,16 @@ namespace FGCMSTool.Views
                 if (img?.DlcItem?.Base == null || img.DlcItem?.Path == null)
                     continue;
 
-                log.Add($"{processed + 1}: Downloading \"{img.Id}\"...");
+                log.Add(LocalizedString("dlc_cms_downloading", [processed +1, img.Id]));
 
                 try
                 {
                     await GetImage($"{img.DlcItem.Base}{img.DlcItem.Path}", img.Id);
-                    log[^1] += " [Saved]";
+                    log[^1] += $" [{LocalizedString("dlc_cms_saved")}]";
                 }
                 catch
                 {
-                    log[^1] += " [Failed]";
+                    log[^1] += $" [{LocalizedString("dlc_cms_failed")}]";
                     failed++;
                 }
 
@@ -90,12 +91,12 @@ namespace FGCMSTool.Views
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
                     DownloadProgress.Value = (int)((double)processed / images.Count * 100);
-                    DownloadProgress.ProgressTextFormat = string.Format("{0} / {1} Done - Failed: {2} ({3:0}%)", processed, images.Count, failed, DownloadProgress.Percentage);
+                    DownloadProgress.ProgressTextFormat = string.Format(LocalizedString("dlc_cms_progress"), processed, images.Count, failed, DownloadProgress.Percentage);
                     DownloadProgressLog.Offset = new Vector(0, DownloadProgressLog.Extent.Height);
                 });
             }
 
-            log.Add("Download finished. You can close this window now");
+            log.Add(LocalizedString("dlc_cms_done"));
             isSuceed = true;
 #if RELEASE_WIN_X64 || DEBUG
             SystemSounds.Exclamation.Play();

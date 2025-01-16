@@ -5,9 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="340"
         x:Class="FGCMSTool.Views.MainWindow"
+		xmlns:local="clr-namespace:FGCMSTool.Managers"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="СMS Tool"
+        Title="{local:LocalizedMarkup menu_title}"
 		TransparencyLevelHint="AcrylicBlur,Blur,Transparent"
         Background="Transparent"
 		Width="600"
@@ -26,27 +27,30 @@
 <Panel>
     <DockPanel VerticalAlignment="Top" HorizontalAlignment="Left">
         <Menu DockPanel.Dock="Top">
-            <MenuItem Header="_About" Click="DisplayAbout"/>
-            <MenuItem Header="_Options" Click="DisplaySettings"/>
-			<MenuItem Header="_Open">
-				<MenuItem Header="Decoded Output" Click="OpenOutput_Decrypted" />
-				<MenuItem Header="Encoded Output" Click="OpenOutput_Encrypted" />
-				<MenuItem Header="Decoded Image Output" Click="OpenOutput_Images" />
-				<MenuItem Header="Logs" Click="OpenLogs"/>
+            <MenuItem Header="{local:LocalizedMarkup menu_dock_about}" Click="DisplayAbout"/>
+            <MenuItem Header="{local:LocalizedMarkup menu_dock_settings}" Click="DisplaySettings"/>
+			<MenuItem Header="{local:LocalizedMarkup menu_dock_open}">
+				<MenuItem Header="{local:LocalizedMarkup menu_open_decoded_out}" Click="OpenOutput_Decrypted" />
+				<MenuItem Header="{local:LocalizedMarkup menu_open_encoded_out}" Click="OpenOutput_Encrypted" />
+				<MenuItem Header="{local:LocalizedMarkup menu_open_localdlc_out}t" Click="OpenOutput_Images" />
+				<MenuItem Header="{local:LocalizedMarkup menu_open_dlc_out}" Click="OpenOutput_ImagesDLC" />
+				<MenuItem Header="{local:LocalizedMarkup menu_open_logs}" Click="OpenLogs"/>
 			</MenuItem>
         </Menu>
     </DockPanel>
 
-    <Label IsHitTestVisible="False" Margin="0,5,0,0" HorizontalAlignment="Center">СMS Tool</Label>
-    <Separator VerticalAlignment="Top" Margin="10,30,10,0"/>
+	<StackPanel>
+		<TextBlock Margin="0,8,0,0" HorizontalAlignment="Center" Text="{local:LocalizedMarkup menu_title}" />
+		<Separator VerticalAlignment="Top" Margin="10,5,10,0"/>
+	</StackPanel>
     
     <StackPanel Margin="0,30,0,0" Spacing="0" VerticalAlignment="Stretch">
 		<TabControl Margin="2">
-			<TabItem Header="CMS Utils">
+			<TabItem Header="{local:LocalizedMarkup menu_tab_cms}">
 				<StackPanel Margin="0" Spacing="5" VerticalAlignment="Stretch">
 					<Grid Margin="0,5,0,5" ColumnDefinitions="*,Auto,*" VerticalAlignment="Center">
 						<Border BorderBrush="Gray" BorderThickness="0,1,0,0" VerticalAlignment="Center" Margin="0,0,5,0" Grid.Column="0"/>
-						<TextBlock Text="Decrypt" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1"/>
+						<TextBlock Text="{local:LocalizedMarkup menu_cms_decrypt}" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1"/>
 						<Border BorderBrush="Gray" BorderThickness="0,1,0,0" VerticalAlignment="Center" Margin="5,0,0,0" Grid.Column="2"/>
 					</Grid>
 					<Grid Margin="0,5,0,0">
@@ -54,11 +58,11 @@
 							<ColumnDefinition Width="*"/>
 							<ColumnDefinition Width="Auto"/>
 						</Grid.ColumnDefinitions>
-						<TextBox x:Name="CMSPath_Encrypted" Watermark="Path to content file (v1 or v2)" Grid.Column="0" Margin="0,0,5,0"/>
-						<Button Content="Browse" Grid.Column="1" Click="OpenPicker_Encrypted"/>
+						<TextBox x:Name="CMSPath_Encrypted" Watermark="{local:LocalizedMarkup menu_cms_decrypt_placeholder}" Grid.Column="0" Margin="0,0,5,0"/>
+						<Button Content="{local:LocalizedMarkup browse_btn}" Grid.Column="1" Click="OpenPicker_Encrypted"/>
 					</Grid>
 					<Button
-						Content="Decode"
+						Content="{local:LocalizedMarkup menu_cms_decrypt_go}"
 						HorizontalAlignment="Stretch"
 						HorizontalContentAlignment="Center"
 						VerticalContentAlignment="Center"
@@ -67,7 +71,7 @@
 
 					<Grid Margin="0,5,0,5" ColumnDefinitions="*,Auto,*" VerticalAlignment="Center">
 						<Border BorderBrush="Gray" BorderThickness="0,1,0,0" VerticalAlignment="Center" Margin="0,0,5,0" Grid.Column="0"/>
-						<TextBlock Text="Encrypt" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1"/>
+						<TextBlock Text="{local:LocalizedMarkup menu_cms_encrypt}" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1"/>
 						<Border BorderBrush="Gray" BorderThickness="0,1,0,0" VerticalAlignment="Center" Margin="5,0,0,0" Grid.Column="2"/>
 					</Grid>
 
@@ -76,22 +80,22 @@
 							<ColumnDefinition Width="*"/>
 							<ColumnDefinition Width="Auto"/>
 						</Grid.ColumnDefinitions>
-						<TextBox x:Name="CMSPath_Decrypted" Watermark="Path to content as json OR path to ._meta.json if by parts" Grid.Column="0" Margin="0,0,5,0"/>
-						<Button Content="Browse" Grid.Column="1" Click="OpenPicker_Decrypted"/>
+						<TextBox x:Name="CMSPath_Decrypted" Watermark="{local:LocalizedMarkup menu_cms_encrypt_placeholder}" Grid.Column="0" Margin="0,0,5,0"/>
+						<Button Content="{local:LocalizedMarkup browse_btn}" Grid.Column="1" Click="OpenPicker_Decrypted"/>
 					</Grid>
 					<Button
-						Content="Encode"
+						Content="{local:LocalizedMarkup menu_cms_encrypt_go}"
 						HorizontalAlignment="Stretch"
 						HorizontalContentAlignment="Center"
 						VerticalContentAlignment="Center"
 						Click="EncryptContent"/>
 				</StackPanel>
 			</TabItem>
-			<TabItem Header="DLC Images">
+			<TabItem Header="{local:LocalizedMarkup menu_tab_dlc}">
 				<StackPanel Margin="0" Spacing="5" VerticalAlignment="Stretch">
 					<Grid Margin="0,5,0,5" ColumnDefinitions="*,Auto,*" VerticalAlignment="Center">
 						<Border BorderBrush="Gray" BorderThickness="0,1,0,0" VerticalAlignment="Center" Margin="0,0,5,0" Grid.Column="0"/>
-						<TextBlock Text="Decrypt local images" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1"/>
+						<TextBlock Text="{local:LocalizedMarkup menu_dlc_local}" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1"/>
 						<Border BorderBrush="Gray" BorderThickness="0,1,0,0" VerticalAlignment="Center" Margin="5,0,0,0" Grid.Column="2"/>
 					</Grid>
 					<Grid Margin="0,5,0,0">
@@ -99,18 +103,18 @@
 							<ColumnDefinition Width="*"/>
 							<ColumnDefinition Width="Auto"/>
 						</Grid.ColumnDefinitions>
-						<TextBox x:Name="CMSImageFileMapPath" Watermark="Path to file map (files.map)" Grid.Column="0" Margin="0,0,5,0"/>
-						<Button Content="Browse" Grid.Column="1" Click="OpenPicker_ImageFileMap"/>
+						<TextBox x:Name="CMSImageFileMapPath" Watermark="{local:LocalizedMarkup menu_dlc_local_placeholder}" Grid.Column="0" Margin="0,0,5,0"/>
+						<Button Content="{local:LocalizedMarkup browse_btn}" Grid.Column="1" Click="OpenPicker_ImageFileMap"/>
 					</Grid>
 					<Button
-						Content="Decode"
+						Content="{local:LocalizedMarkup menu_dlc_local_go}"
 						HorizontalAlignment="Stretch"
 						HorizontalContentAlignment="Center"
 						VerticalContentAlignment="Center"
 						Click="DecodeImages"/>
 					<Grid Margin="0,5,0,5" ColumnDefinitions="*,Auto,*" VerticalAlignment="Center">
 						<Border BorderBrush="Gray" BorderThickness="0,1,0,0" VerticalAlignment="Center" Margin="0,0,5,0" Grid.Column="0"/>
-						<TextBlock Text="Download DLC Images" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1"/>
+						<TextBlock Text="{local:LocalizedMarkup menu_dlc_cms}" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1"/>
 						<Border BorderBrush="Gray" BorderThickness="0,1,0,0" VerticalAlignment="Center" Margin="5,0,0,0" Grid.Column="2"/>
 					</Grid>
 					<Grid Margin="0,5,0,0">
@@ -118,11 +122,11 @@
 							<ColumnDefinition Width="*"/>
 							<ColumnDefinition Width="Auto"/>
 						</Grid.ColumnDefinitions>
-						<TextBox x:Name="CMSFetchDlcImages" Watermark="Path to encrypted content (v1 or v2)" Grid.Column="0" Margin="0,0,5,0"/>
-						<Button Content="Browse" Grid.Column="1" Click="OpenPicker_DLCImagesContent"/>
+						<TextBox x:Name="CMSFetchDlcImages" Watermark="{local:LocalizedMarkup menu_dlc_cms_placeholder}" Grid.Column="0" Margin="0,0,5,0"/>
+						<Button Content="{local:LocalizedMarkup browse_btn}" Grid.Column="1" Click="OpenPicker_DLCImagesContent"/>
 					</Grid>
 					<Button
-						Content="Begin Download"
+						Content="{local:LocalizedMarkup menu_dlc_cms_go}"
 						HorizontalAlignment="Stretch"
 						HorizontalContentAlignment="Center"
 						VerticalContentAlignment="Center"

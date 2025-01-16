@@ -4,7 +4,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="340"
         x:Class="FGCMSTool.Views.DlcWindow"
-        Title="СMS Tool"
+		xmlns:local="clr-namespace:FGCMSTool.Managers"
+        Title="{local:LocalizedMarkup dlc_cms}"
 		TransparencyLevelHint="AcrylicBlur,Blur,Transparent"
         Background="Transparent"
 		Width="600"
@@ -15,9 +16,9 @@
 
 	<Panel>
 		<StackPanel>
-			<Label IsHitTestVisible="False" Margin="0,5,0,0" HorizontalAlignment="Center">СMS Tool - Images Download</Label>
-			<Separator VerticalAlignment="Top" Margin="10,2,10,0"/>
-			<TextBlock Text="You can close this window if you want to stop download process" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Margin="10,5,10,0"/>
+			<TextBlock Margin="0,8,0,0" HorizontalAlignment="Center" Text="{local:LocalizedMarkup dlc_cms}" />
+			<Separator VerticalAlignment="Top" Margin="10,5,10,0"/>
+			<TextBlock Text="{local:LocalizedMarkup dlc_cms_tip}" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" Margin="10,5,10,0"/>
 		</StackPanel>
 		
 		<Grid Margin="0,55,0,25">

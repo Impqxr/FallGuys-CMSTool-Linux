@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using static FGCMSTool.SettingsManager;
-
+using static FGCMSTool.Managers.SettingsManager;
+using static FGCMSTool.Managers.LocalizationManager;
 namespace FGCMSTool.Views
 {
     public partial class SettingsWindow : Window
@@ -27,10 +27,10 @@ namespace FGCMSTool.Views
             switch (Settings.SavedSettings.EncryptStrart)
             {
                 case EncryptStrart.V1:
-                    EncryptCombo_Desc.Text = "Content will be encrypted only via selected XOR Key.";
+                    EncryptCombo_Desc.Text = LocalizedString("settings_encrypt_v1");
                     break;
                 case EncryptStrart.V2:
-                    EncryptCombo_Desc.Text = "Content will be encrypted with both, selected XOR Key and GZIP encoding.";
+                    EncryptCombo_Desc.Text = LocalizedString("settings_encrypt_v2");
                     break;
             }
         }
@@ -43,13 +43,13 @@ namespace FGCMSTool.Views
             switch (Settings.SavedSettings.DecryptStrat)
             {
                 case DecryptStrat.Default:
-                    DecryptCombo_Desc.Text = "Decrypts the content file exactly as it was encrypted.";
+                    DecryptCombo_Desc.Text = LocalizedString("settings_decrypt_default");
                     break;
                 case DecryptStrat.Formatting:
-                    DecryptCombo_Desc.Text = "Decrypts the content file and formats it with indentation for more readable look.";
+                    DecryptCombo_Desc.Text = LocalizedString("settings_decrypt_format");
                     break;
                 case DecryptStrat.Parts:
-                    DecryptCombo_Desc.Text = "Decrypts the content file and splits it into parts for easier editing.";
+                    DecryptCombo_Desc.Text = LocalizedString("settings_decrypt_parts");
                     break;
             }
         }
