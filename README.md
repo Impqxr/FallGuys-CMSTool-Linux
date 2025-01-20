@@ -10,7 +10,20 @@
 - Encryption in both ways. Content_v1 & content_v2
 
 ## Usage
+#### Windows
 - Extract [latest release](https://github.com/floyzi/FallGuys-CMSTool/releases/latest) into the blank folder and launch the .exe
+#### Linux (NixOS or any distribution with Nix package manager installed)
+- Enable flakes [as you need for your distribution](https://wiki.nixos.org/wiki/Flakes#Enable_flakes_permanently_in_NixOS)
+- Execute command ```nix run github:Impqxr/FallGuys-CMSTool-Linux```
+#### Linux (without Nix package manager)
+Check for [Compilation](#Compilation) step
+
+## Compilation
+#### Windows
+- TODO
+#### Linux
+- TODO
+
 ### Decryption
 - Select `content_v2.gdata` or `content_v1` file (can be found in `AppData/LocalLow/Mediatonic/FallGuys_client/`)
 - Hit the `"Decrypt"` button and wait for a moment
