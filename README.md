@@ -24,12 +24,12 @@ Check for [Compilation](#Compilation) step
 #### Linux
 - TODO
 
-### Decryption
+## How to decrypt
 - Select `content_v2.gdata` or `content_v1` file (can be found in `AppData/LocalLow/Mediatonic/FallGuys_client/`)
 - Hit the `"Decrypt"` button and wait for a moment
 - Once done check the `"Decrypted_Output"` folder (`Open -> Decoded Output`) for the decrypted content file
 
-### Encryption
+## How to encrypt
 - Select `.json` file of your content (or `_meta.json` if you decrypted content into parts)
 - Hit the `"Encrypt"` button and wait for a moment 
 - Once done check the `"Encrypted_Output"` folder (`Open -> Encoded Output`). There you'll find the `content_v2.gdata` file (or `content_v1`, if you selected it in settings)
