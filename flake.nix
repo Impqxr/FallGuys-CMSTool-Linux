@@ -50,8 +50,9 @@
             fixupPhase = ''
               runHook preFixup
 
-              mkdir -p $out/share/icons/hicolor/scalable/apps
-              cp -a $src/CMSTool/Assets/avalonia-logo.ico $out/share/icons/hicolor/scalable/apps/cmstool.ico
+              for size in 16x16 32x32 48x48 64x64 128x128 256x256 512x512; do
+                install -D "$src/CMSTool/Assets/icons/avalonia-logo-$size.png" "$out/share/icons/hicolor/$size/apps/cmstool.png"
+              done
 
               runHook postFixup
             '';
