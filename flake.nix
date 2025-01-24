@@ -24,6 +24,10 @@
               in
               "${projectVersion}+${self.rev or self.dirtyRev or "unknown"}";
 
+            nativeBuildInputs = with pkgs; [
+              copyDesktopItems
+            ];
+
             src = ./.;
             projectFile = "CMSTool/FallGuys-CMSTool.csproj";
             dotnet-sdk = pkgs.dotnetCorePackages.sdk_8_0;
