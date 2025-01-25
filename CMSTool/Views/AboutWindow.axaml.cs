@@ -9,7 +9,8 @@ namespace FGCMSTool.Views
 {
     public partial class AboutWindow : Window
     {
-        string commit;
+        string commit = string.Empty;
+        const string Unknown = "Unknown";
         public AboutWindow()
         {
             InitializeComponent();
@@ -20,9 +21,10 @@ namespace FGCMSTool.Views
                 if (versionAndRev.Length >= 2)
                 {
                     commit = versionAndRev[1].Split('-')[0];
-                    AppVer.Text = string.Format(AppVer.Text, versionAndRev != null && versionAndRev.Length > 0 ? versionAndRev[0] : "MISSING");
-                    AppRev.Text = string.Format(AppRev.Text, versionAndRev != null && versionAndRev.Length > 1 ? commit.Substring(0, 7) : "MISSING");
+                    SetAppInfo(versionAndRev[0], commit[..7]);
                 }
+                else
+                    SetAppInfo(Unknown, Unknown);
             };
         }
 
@@ -35,5 +37,11 @@ namespace FGCMSTool.Views
             FileName = url,
             UseShellExecute = true
         });
+
+        void SetAppInfo(string ver, string rev)
+        {
+            AppVer.Text = string.Format(AppVer.Text, ver);
+            AppRev.Text = string.Format(AppRev.Text, rev);
+        }
     }
 }

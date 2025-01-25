@@ -16,22 +16,25 @@ namespace FGCMSTool.Managers
     {
         static Dictionary<string, string>? LangEntries;
         const string linkDef = @"\{ref:(.*?)\}";
+        const string NullList = "NULL: {0}";
+        const string Missing = "MISSING: {0}";
 
         public static void Setup(string basePath)
         {
             var path = Path.Combine(basePath, "Assets", "Locale", "en.json");
-            LangEntries = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(path));
+            if (File.Exists(path)) 
+                LangEntries = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(path));
         }
 
         public static string LocalizedString(string key, object[]? format = null)
         {
             if (LangEntries == null)
-                return $"NULL: {key}";
+                return string.Format(NullList, key);
 
             LangEntries.TryGetValue(key, out var value);
 
             if (value == null)
-                return $"MISSING: {key}";
+                return string.Format(Missing, key);
 
             string result = value;
 
@@ -43,7 +46,7 @@ namespace FGCMSTool.Managers
                 if (value_2 != null)
                     result = result.Replace(match.Value, value_2);
                 else
-                    result = result.Replace(match.Value, $"MISSING: {refKey}");
+                    result = result.Replace(match.Value, string.Format(Missing, refKey));
             }
 
 
