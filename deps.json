@@ -173,5 +173,10 @@
     "pname": "Tmds.DBus.Protocol",
     "version": "0.20.0",
     "hash": "sha256-CRW/tkgsuBiBJfRwou12ozRQsWhHDooeP88E5wWpWJw="
+  },
+  {
+    "pname": "Xdg.Directories",
+    "version": "0.1.2",
+    "hash": "sha256-jdN03SWEOoEB60SORdA001Yn0A2ias3DbP96GtTosak="
   }
 ]

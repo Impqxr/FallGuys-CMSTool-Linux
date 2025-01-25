@@ -12,6 +12,7 @@ using Newtonsoft.Json.Linq;
 using JsonSerializer = Newtonsoft.Json.JsonSerializer;
 using FGCMSTool.Managers;
 using static FGCMSTool.Managers.LocalizationManager;
+using Xdg.Directories;
 
 #if RELEASE_WIN_X64 || DEBUG
 using System.Media;
@@ -28,7 +29,14 @@ namespace FGCMSTool.Views
         readonly string LogsDir;
         public MainWindow()
         {
-            var baseDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "CMSTool");
+#if RELEASE_WIN_X64 || DEBUG
+            var baseDir = Path.GetDirectoryName(AppContext.BaseDirectory);
+
+            baseDir ??= AppContext.BaseDirectory;
+#else
+            var baseDir = Path.Combine(BaseDirectory.DataHome, "CMSTool");
+            var stateDir = Path.Combine(BaseDirectory.StateHome, "CMSTool");
+#endif
             LocalizationManager.Setup(baseDir);
 
             InitializeComponent();
@@ -49,12 +57,20 @@ namespace FGCMSTool.Views
             if (!Directory.Exists(DownloadedDlcImagesDir))
                 Directory.CreateDirectory(DownloadedDlcImagesDir);
 
+#if RELEASE_WIN_X64 || DEBUG
             LogsDir = Path.Combine(baseDir, "Logs");
+#else
+            LogsDir = Path.Combine(stateDir, "Logs");
+#endif
             if (!Directory.Exists(LogsDir))
                 Directory.CreateDirectory(LogsDir);
 
             SettingsManager.Settings = new SettingsManager();
+#if RELEASE_WIN_X64 || DEBUG
             SettingsManager.Settings.Load(baseDir);
+#else
+            SettingsManager.Settings.Load(stateDir);
+#endif
 
         }
 
