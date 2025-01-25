@@ -138,7 +138,7 @@
 
 	<Grid>
 		<StackPanel Grid.Row="1" VerticalAlignment="Bottom" Margin="0">
-			<TextBlock x:Name="ProgressState" Text="Idle" Margin="5"/>
+			<TextBlock x:Name="ProgressState" Text="{local:LocalizedMarkup null_task}" Margin="5"/>
 		</StackPanel>
 	</Grid>
 

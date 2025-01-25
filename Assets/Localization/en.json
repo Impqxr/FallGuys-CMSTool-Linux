@@ -1,5 +1,4 @@
 { 
-    "test_key": "test",
     "title": "CMS Tool",
     "settings_title": "{ref:title} - Settings",
     "settings_xorkey": "XOR Key",
