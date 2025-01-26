@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -14,16 +15,40 @@ namespace FGCMSTool.Managers
 {
     public class LocalizationManager
     {
-        static Dictionary<string, string>? LangEntries;
+        private static readonly Lazy<Dictionary<string, string>?> LazyLangEntries = new(() =>
+        {
+            try
+            {
+                //todo lang switching 
+                using var resStr = Assembly.GetExecutingAssembly().GetManifestResourceStream(FindLang("en"));
+                using var reader = new StreamReader(resStr);
+                return JsonConvert.DeserializeObject<Dictionary<string, string>>(reader.ReadToEnd());
+            }
+            catch
+            {
+                return null;
+            }
+        });
+
+        static string FindLang(string lang)
+        {
+            foreach (var name in System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceNames())
+            {
+                if (name.Contains("Localization") && name.Contains(lang))
+                    return name;
+            }
+
+            return string.Empty;
+        }
+
+        public static Dictionary<string, string>? LangEntries => LazyLangEntries.Value;
         const string linkDef = @"\{ref:(.*?)\}";
         const string NullList = "NULL: {0}";
         const string Missing = "MISSING: {0}";
 
         public static void Setup(string basePath)
         {
-            var path = Path.Combine(basePath, "Assets", "Locale", "en.json");
-            if (File.Exists(path)) 
-                LangEntries = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(path));
+
         }
 
         public static string LocalizedString(string key, object[]? format = null)
