@@ -14,19 +14,101 @@
 - Extract [latest release](https://github.com/floyzi/FallGuys-CMSTool/releases/latest) into the blank folder and launch the .exe
 - Or [compile it](#Windows-1) by yourself
 #### Linux (NixOS)
-- TODO
-#### Linux (Any distribution with Nix package manager installed)
-- Enable flakes [as you need for your distribution](https://wiki.nixos.org/wiki/Flakes#Enable_flakes_permanently_in_NixOS)
-- Execute command ```nix run github:Impqxr/FallGuys-CMSTool-Linux```
+- Installing the package directly in your NixOS configuration with flakes
+```nix
+{
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+
+    cmstool = {
+      url = "github:Impqxr/FallGuys-CMSTool-Linux";
+    };
+  };
+
+  outputs =
+    { nixpkgs, cmstool, ... }:
+    {
+      nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
+        modules = [
+          ./configuration.nix
+
+          (
+            { pkgs, ... }:
+            {
+              environment.systemPackages = [ cmstool.packages.${pkgs.system} ];
+            }
+          )
+        ];
+      };
+    };
+}
+```
+- Installing the package directly in your NixOS configuration without flakes
+```nix
+{ pkgs, ... }:
+{
+  environment.systemPackages = [
+    (import (
+      builtins.fetchTarball "https://github.com/Impqxr/FallGuys-CMSTool-Linux/archive/linux.tar.gz"
+    )).packages.${pkgs.system}
+  ];
+}
+```
+#### Linux (NixOS or any distribution with Nix package manager)
+- If you have [enabled flakes](https://wiki.nixos.org/wiki/Flakes#Enable_flakes_permanently_in_NixOS), run one of these commands either to run or install it
+```shell
+# To run it
+nix run github:Impqxr/FallGuys-CMSTool-Linux
+
+# To install it
+nix profile install github:Impqxr-CMSTool-Linux
+```
+- If you prefer without flakes, run these commands to install it
+```shell
+nix-channel --add https://github.com/Impqxr/FallGuys-CMSTool-Linux/archive/linux.tar.gz cmstool
+nix-channel --update cmstool
+
+nix-env -iA cmstool
+```
+
 #### Linux (without Nix package manager)
-- TODO with prebuilt
+- Extract [latest release](https://github.com/floyzi/FallGuys-CMSTool/releases/latest) into the blank folder and launch the executable `CMSTool`
 - Or [compile it](#Linux) by yourself
 
 ## Compilation
 #### Windows
-- TODO
+1. Install [Git for Windows](https://git-scm.com/downloads/win) and [.NET SDK 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+- You can do this easily with one command in PowerShell or manually
+```shell
+winget install Microsoft.DotNet.SDK.8 Git.Git --source winget
+```
+2. Now compile it with these commands in PowerShell!
+```shell
+git clone https://github.com/Impqxr/FallGuys-CMSTool-Linux.git; cd FallGuys-CMSTool-Linux
+dotnet publish -c Release-Win-x64 --self-contained -p:PublishSingleFile=true -p:PublishTrimmed=true
+```
+3. Output files will be located in `.\CMSTool\bin\Release-Win-x64\net8.0\win-x64\publish`
+   
 #### Linux
-- TODO
+1. Install [.NET SDK 8.0](https://learn.microsoft.com/en-us/dotnet/core/install/linux) and Git like this
+- Ubuntu
+```shell
+apt install dotnet-sdk-8.0 git
+```
+- Fedora
+```shell
+dnf install dotnet-sdk-8.0 git
+```
+- Arch Linux
+```shell
+pacman -S dotnet-sdk-8.0 git
+```
+2. Now compile it with these commands!
+```shell
+git clone https://github.com/Impqxr/FallGuys-CMSTool-Linux.git && cd FallGuys-CMSTool-Linux
+dotnet publish -c Release-Linux-x64 --self-contained -p:PublishSingleFile=true -p:PublishTrimmed=true
+```
+3. Output files will be located in `./CMSTool/bin/Release-Linux-x64/net-8.0/linux-x64/publish`
 
 ## Usage
 ### How to decrypt
