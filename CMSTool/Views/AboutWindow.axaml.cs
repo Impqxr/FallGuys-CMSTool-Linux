@@ -4,6 +4,7 @@ using System.Diagnostics;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using Avalonia;
 
 namespace FGCMSTool.Views
 {
@@ -14,6 +15,10 @@ namespace FGCMSTool.Views
         public AboutWindow()
         {
             InitializeComponent();
+#if !RELEASE_WIN_X64 || !DEBUG
+            MenuTitle.IsVisible = false;
+            MainContent.Margin = new Thickness(20, 10, 20, 0);
+#endif
 
             Loaded += (sender, e) =>
             {

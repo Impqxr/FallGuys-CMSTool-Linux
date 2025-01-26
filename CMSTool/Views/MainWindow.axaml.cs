@@ -13,6 +13,8 @@ using JsonSerializer = Newtonsoft.Json.JsonSerializer;
 using FGCMSTool.Managers;
 using static FGCMSTool.Managers.LocalizationManager;
 using Xdg.Directories;
+using Avalonia;
+
 
 #if RELEASE_WIN_X64 || DEBUG
 using System.Media;
@@ -40,6 +42,9 @@ namespace FGCMSTool.Views
             LocalizationManager.Setup(baseDir);
 
             InitializeComponent();
+#if !RELEASE_WIN_X64 || !DEBUG
+            MenuTitleTextBlock.Text = "";
+#endif
 
             DecryptionOutputDir = Path.Combine(baseDir, "Decrypted_Output");
             if (!Directory.Exists(DecryptionOutputDir))
