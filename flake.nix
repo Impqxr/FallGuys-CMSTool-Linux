@@ -1,7 +1,14 @@
 {
+  description = "Flake for FallGuys-CMSTool";
+
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs";
+    flake-compat = {
+      url = "github:edolstra/flake-compat";
+      flake = false;
+    };
   };
+
   outputs = { self, nixpkgs, ... }:
     let
       # For future purposes
